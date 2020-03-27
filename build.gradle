@@ -1,0 +1,22 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+//apply plugin: 'application'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    //implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(path: ':JMPCFramework:JMJavaFramework')
+    //testImplementation 'junit:junit:4.12'
+    //implementation 'com.squareup.picasso:picasso:2.5.2'
+    //implementation 'jp.wasabeef:picasso-transformations:2.1.0'
+    //implementation group: 'org.apache.poi', name: 'poi', version: '3.9'
+    
+    // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
+    //compile group:'org.xerial', name:'sqlite-jdbc', version:'3.8.11.2'
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    //compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.13'
+    
+}
