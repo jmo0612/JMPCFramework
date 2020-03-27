@@ -19,9 +19,5 @@ public class JMPCFunctions{
         JMFunctions.init(languageExcelFile);
     }
     
-    public static String test(){
-        return JMFunctions.getStringMessage("DB_NO_CONNECTION");
-        //return "TEST";
-    }
 
 }

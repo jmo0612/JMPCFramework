@@ -43,17 +43,18 @@ public class JMPCAsyncLoaderDefault implements JMAsyncListener {
     
     private String getMessage(String id, String asyncType){
         String ret="";
-        /*String msgId=JMConstMessage.JM_ASYNC+asyncType;
-        if(id.equals(JMConnection.ASYNC_DB_CONNECT)){
-            msgId+=JMConstMessage.JM_ASYNC_STATUS_DB_CONNECT;
-        }else if(id.equals(JMConnection.ASYNC_DB_QUERY_VIEW)){
-            msgId+=JMConstMessage.JM_ASYNC_STATUS_DB_QUERY_VIEW;
-        }else if(id.equals(JMConnection.ASYNC_DB_QUERY_UPDATE)){
-            msgId+=JMConstMessage.JM_ASYNC_STATUS_DB_QUERY_UPDATE;
-        }else if(id.equals(JMConnection.ASYNC_DB_QUERY_DELETE)){
-            msgId+=JMConstMessage.JM_ASYNC_STATUS_DB_QUERY_DELETE;
+        String msgId=JMConstMessage.MSG_ASYNC+asyncType;
+        if(id.equals(JMConnection.JM_ASYNC_CONNECT)){
+            msgId+=JMConstMessage.MSG_ASYNC_STATE_CONNECT_DB;
+        }else if(id.equals(JMConnection.JM_ASYNC_FETCH)){
+            msgId+=JMConstMessage.MSG_ASYNC_STATE_FETCH;
+        }else if(id.equals(JMConnection.JM_ASYNC_UPDATE)){
+            msgId+=JMConstMessage.MSG_ASYNC_STATE_UPDATE;
+        }else if(id.equals(JMConnection.JM_ASYNC_DELETE)){
+            msgId+=JMConstMessage.MSG_ASYNC_STATE_DELETE;
         }
-        ret=JMMessage.getMessage(msgId);*/
+        //ret=JMMessage.getMessage(msgId);
+        ret=JMFunctions.getMessege(msgId);
         return ret;
     }
 
