@@ -60,24 +60,24 @@ public class JMPCAsyncLoaderDefault implements JMAsyncListener {
 
     @Override
     public void onJMStart(String id) {
-        //this.txtMsg.setText(this.getMessage(id, JMConstMessage.JM_ASYNC_START));
+        this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_STARTED));
         this.lock();
     }
 
     @Override
     public void onJMProcess(String id) {
-        //this.txtMsg.setText(this.getMessage(id, JMConstMessage.JM_ASYNC_PROCESS));
+        this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_PROCESSING));
     }
 
     @Override
     public void onJMComplete(Object result, String id) {
-        //this.txtMsg.setText(this.getMessage(id, JMConstMessage.JM_ASYNC_COMPLETE));
+        this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_COMPLETED));
         this.unlock();
     }
 
     @Override
     public void onJMError(String errorMessage, String id) {
-        //this.txtMsg.setText(this.getMessage(id, JMConstMessage.JM_ASYNC_ERROR));
+        this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_ERROR));
         JMFunctions.traceAndShow(errorMessage);
         this.unlock();
     }
