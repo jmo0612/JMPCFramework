@@ -1,0 +1,3 @@
+[submodule "JMJavaFramework"]
+	path = JMJavaFramework
+	url = https://github.com/jmo0612/JMJavaFramework.git
