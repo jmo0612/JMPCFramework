@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmjavaframework.JMFunctions;
 import com.thowo.jmjavaframework.db.JMConnection;
+import com.thowo.jmjavaframework.db.JMDBMySQL;
 import com.thowo.jmpcframework.JMPCFunctions;
 import java.awt.Color;
 import java.awt.Image;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
 /**
@@ -29,23 +32,32 @@ import java.util.logging.Logger;
  */
 public class JMPCSplashForm extends javax.swing.JFrame {
     public static final String JM_ASYNC_LOAD_CONFIG="LOADCONFIG";
+    private JFrame mainForm;
+    private List<Object> dBs;
 
     /**
      * Creates new form JMPCSplashForm
      */
     
-    private void initFramework(){
+    
+    public JMPCSplashForm(JFrame mainForm, List<Object> databases) {
+        this.mainForm=mainForm;
+        this.dBs=databases;
+        init();
+    }
+    
+    private void init(){
         JMFunctions.setUIListener(new JMPCUIMessenger());
+        initSplash();
+    }
+    
+    private void initFramework(){
         JMFunctions.setAsyncListener(new JMPCAsyncLoaderDefault( this.jLabel1 , null ));
         String languageExcelFileName = "raw/jmlanguagepack.xls";
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File languageExcelFile = new File(classLoader.getResource(languageExcelFileName).getFile());
         JMPCFunctions.init(languageExcelFile);
         
-    }
-    public JMPCSplashForm() {
-        initFramework();
-        initSplash();
     }
     
     public void initSplash(){
@@ -68,6 +80,7 @@ public class JMPCSplashForm extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.jLabel1.setForeground(Color.WHITE);
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -84,6 +97,21 @@ public class JMPCSplashForm extends javax.swing.JFrame {
         setLocationByPlatform(true);
         setUndecorated(true);
         setResizable(false);
+        addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                formFocusGained(evt);
+            }
+        });
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabel1.setText("Loading");
@@ -108,6 +136,32 @@ public class JMPCSplashForm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowOpened
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formComponentShown
+
+    private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
+        // TODO add your handling code here:
+        initFramework();
+        Thread t=new Thread(new Runnable(){
+            @Override
+            public void run() {
+                JMFunctions.setConnection(new JMConnection((File)JMPCSplashForm.this.dBs.get(0),(JMDBMySQL)JMPCSplashForm.this.dBs.get(1)));
+                JMPCSplashForm.this.mainForm.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                JMPCSplashForm.this.mainForm.setVisible(true);
+                JMPCSplashForm.this.setVisible(false);
+            }
+        });
+        t.start();
+        //this.setVisible(false);
+        
+        
+    }//GEN-LAST:event_formFocusGained
 
     /**
      * @param args the command line arguments
@@ -137,11 +191,12 @@ public class JMPCSplashForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        /*java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new JMPCSplashForm().setVisible(true);
             }
-        });
+        });*/
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
