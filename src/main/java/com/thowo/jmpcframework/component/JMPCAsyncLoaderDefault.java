@@ -52,6 +52,9 @@ public class JMPCAsyncLoaderDefault implements JMAsyncListener {
             msgId+=JMConstMessage.MSG_ASYNC_STATE_UPDATE;
         }else if(id.equals(JMConnection.JM_ASYNC_DELETE)){
             msgId+=JMConstMessage.MSG_ASYNC_STATE_DELETE;
+        }else if(id.equals(JMPCSplashForm.JM_ASYNC_LOAD_CONFIG)){
+            msgId+=JMConstMessage.MSG_ASYNC_STATE_LOAD_CONFIG;
+            JMFunctions.trace(msgId);
         }
         //ret=JMMessage.getMessage(msgId);
         ret=JMFunctions.getMessege(msgId);
@@ -60,26 +63,26 @@ public class JMPCAsyncLoaderDefault implements JMAsyncListener {
 
     @Override
     public void onJMStart(String id) {
-        this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_STARTED));
-        this.lock();
+        if(this.txtMsg!=null)this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_STARTED));
+        if(this.pnlLocker!=null)this.lock();
     }
 
     @Override
     public void onJMProcess(String id) {
-        this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_PROCESSING));
+        if(this.txtMsg!=null)this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_PROCESSING));
     }
 
     @Override
     public void onJMComplete(Object result, String id) {
-        this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_COMPLETED));
-        this.unlock();
+        if(this.txtMsg!=null)this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_COMPLETED));
+        if(this.pnlLocker!=null)this.unlock();
     }
 
     @Override
     public void onJMError(String errorMessage, String id) {
-        this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_ERROR));
+        if(this.txtMsg!=null)this.txtMsg.setText(this.getMessage(id, JMConstMessage.MSG_ASYNC_ERROR));
         JMFunctions.traceAndShow(errorMessage);
-        this.unlock();
+        if(this.pnlLocker!=null)this.unlock();
     }
     
 }
