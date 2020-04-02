@@ -72,7 +72,7 @@ public class JMPCSplashForm extends javax.swing.JFrame {
         ImageIcon ico=new ImageIcon(img.getScaledInstance(scaled.get(0).getIntX(), scaled.get(0).getIntY(), Image.SCALE_SMOOTH));
         JLabel lblImg=new JLabel(ico);
         this.setContentPane(lblImg);
-        lblImg.setBounds(scaled.get(1).getIntX(), scaled.get(1).getIntX(), scaled.get(0).getIntX(), scaled.get(0).getIntY());
+        lblImg.setBounds(scaled.get(1).getIntX(), scaled.get(1).getIntY(), scaled.get(0).getIntX(), scaled.get(0).getIntY());
         
         initComponents();
         
@@ -152,7 +152,7 @@ public class JMPCSplashForm extends javax.swing.JFrame {
             @Override
             public void run() {
                 JMFunctions.setConnection(new JMConnection((File)JMPCSplashForm.this.dBs.get(0),(JMDBMySQL)JMPCSplashForm.this.dBs.get(1)));
-                JMPCSplashForm.this.mainForm.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                //JMPCSplashForm.this.mainForm.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 JMPCSplashForm.this.mainForm.setVisible(true);
                 JMPCSplashForm.this.setVisible(false);
             }
