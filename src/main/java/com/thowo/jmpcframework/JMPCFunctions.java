@@ -25,7 +25,12 @@ public class JMPCFunctions{
     //private static String tes;
     
     public static void init(File languageExcelFile){
-        JMFunctions.init(languageExcelFile);
+        String myAppCacheDir=System.getProperty("user.dir")+"/.jmcache";
+        File cache=new File(myAppCacheDir+"/readme.jm");
+        if(!JMFunctions.fileExist(cache)){
+            JMFunctions.createFile(cache);
+        }
+        JMFunctions.init(languageExcelFile,myAppCacheDir);
     }
     
     public static void panelBGImage(JPanel panel,String imgResPath){
