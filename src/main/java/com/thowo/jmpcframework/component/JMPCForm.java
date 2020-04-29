@@ -9,7 +9,10 @@ import com.thowo.jmjavaframework.JMFunctions;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
@@ -17,11 +20,14 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.OverlayLayout;
+import javax.swing.SwingConstants;
 
 /**
  *
@@ -43,6 +49,17 @@ public class JMPCForm extends JFrame {
         bg.setLayout(new OverlayLayout(bg));
         this.loadingSprite=loadingSprite;
         
+        JPanel p=new JPanel();
+        p.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        
+        //p.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        p.setOpaque(false);
+        //p.setAlignmentX(RIGHT_ALIGNMENT);
+        JButton tes=new JButton("haha");
+        JButton tes2=new JButton("hihi");
+        p.add(tes);
+        p.add(tes2);
+        bg.add(p);
         bg.add(this.loadingSprite);
         bg.add(content);
         content.setOpacity(1.0f);
