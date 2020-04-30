@@ -58,13 +58,19 @@ public class JMPCFunctions{
         }
         //BasicTextFieldUI a;
     }
-    public static void init(File languageExcelFile){
+    public static void init(){
         String myAppCacheDir=System.getProperty("user.dir")+"/.jmcache";
         File cache=new File(myAppCacheDir+"/readme.jm");
         if(!JMFunctions.fileExist(cache)){
             JMFunctions.createFile(cache);
         }
-        JMFunctions.init(languageExcelFile,myAppCacheDir);
+        String myAppDocDir=System.getProperty("user.dir")+"/data";
+        File doc=new File(myAppDocDir+"/readme.jm");
+        if(!JMFunctions.fileExist(doc)){
+            JMFunctions.createFile(doc);
+        }
+        File languageExcelFile = new File(JMPCFunctions.class.getClassLoader().getResource("raw/jmlanguagepack.xls").getFile());
+        JMFunctions.init(languageExcelFile,myAppCacheDir,myAppDocDir);
     }
     
     public static void panelBGImage(JPanel panel,String imgResPath){

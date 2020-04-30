@@ -56,7 +56,7 @@ public class JMPCSplashForm extends javax.swing.JFrame {
         String languageExcelFileName = "raw/jmlanguagepack.xls";
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         File languageExcelFile = new File(classLoader.getResource(languageExcelFileName).getFile());
-        JMPCFunctions.init(languageExcelFile);
+        JMPCFunctions.init();
         
     }
     
