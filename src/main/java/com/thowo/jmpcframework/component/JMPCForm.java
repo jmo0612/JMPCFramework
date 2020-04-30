@@ -43,7 +43,7 @@ public class JMPCForm extends JFrame {
         OpacityPanel content=new OpacityPanel();
         content.setLayout(new BorderLayout());
         content.add(mainPanel,BorderLayout.CENTER);
-        JLabel dummy=new JLabel(" ");
+        JLabel dummy=new JLabel("");
         dummy.setOpaque(false);
         content.add(dummy,BorderLayout.EAST);
         bg.setLayout(new OverlayLayout(bg));

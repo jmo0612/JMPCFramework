@@ -107,7 +107,7 @@ public class JMPCFunctions{
         return ret;
     }
     
-    public static URL getResourcePath(String resId, Class<?> CLASS){
+    public static URL getResourcePath(String resId, Class<?> CLASS) {
         return CLASS.getClassLoader().getResource(resId);
     }
     public static URL getResourcePath(String resId){
