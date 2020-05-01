@@ -30,7 +30,8 @@ public class JMPCLoadingSprite extends JPanel{
     
     public JMPCLoadingSprite(){
         JMVec2 frameSize=new JMVec2(50,50);
-        Image img=new ImageIcon(JMPCFunctions.getResourcePath("img/loading.gif", this.getClass())).getImage();
+        //System.out.println(JMFunctions.getResourcePath("img/loading.gif", this.getClass()).getFile());
+        Image img=new ImageIcon(JMFunctions.getResourcePath("img/loading.gif", this.getClass())).getImage();
         JMVec2 imgSize=new JMVec2(img.getWidth(this),img.getHeight(this));
         List<JMVec2> scaled=JMFunctions.scaledSize(imgSize, frameSize, JMFunctions.SCALE_FIT);
         ImageIcon ico=new ImageIcon(img.getScaledInstance(scaled.get(0).getIntX(), scaled.get(0).getIntY(), Image.SCALE_DEFAULT));

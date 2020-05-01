@@ -9,6 +9,7 @@ import com.thowo.jmjavaframework.JMFunctions;
 import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmjavaframework.table.JMCell;
 import com.thowo.jmjavaframework.table.JMTable;
+import com.thowo.jmpcframework.component.JMPCUIMessenger;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,25 +59,26 @@ public class JMPCFunctions{
         }
         //BasicTextFieldUI a;
     }
-    public static void init(){
-        String myAppCacheDir=System.getProperty("user.dir")+"/.jmcache";
+    public static void init(String localeId){
+        JMFunctions.setUIListener(new JMPCUIMessenger());
+        String myAppCacheDir=System.getProperty("user.dir")+"/._cache";
         File cache=new File(myAppCacheDir+"/readme.jm");
         if(!JMFunctions.fileExist(cache)){
             JMFunctions.createFile(cache);
         }
-        String myAppDocDir=System.getProperty("user.dir")+"/data";
+        String myAppDocDir=System.getProperty("user.dir")+"/_appData";
         File doc=new File(myAppDocDir+"/readme.jm");
         if(!JMFunctions.fileExist(doc)){
             JMFunctions.createFile(doc);
         }
         File languageExcelFile = new File(JMPCFunctions.class.getClassLoader().getResource("raw/jmlanguagepack.xls").getFile());
-        JMFunctions.init(languageExcelFile,myAppCacheDir,myAppDocDir);
+        JMFunctions.init(languageExcelFile,myAppCacheDir,myAppDocDir,localeId);
     }
     
     public static void panelBGImage(JPanel panel,String imgResPath){
         JMVec2 panelSize=new JMVec2(panel.getWidth(),panel.getHeight());
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        Image img=new ImageIcon(classLoader.getResource(imgResPath).getFile()).getImage();
+        Image img=new ImageIcon(classLoader.getResource(imgResPath)).getImage();
         JMVec2 imgSize=new JMVec2(img.getWidth(panel),img.getHeight(panel));
         List<JMVec2> scaled=JMFunctions.scaledSize(imgSize, panelSize, JMFunctions.SCALE_FIT);
         ImageIcon ico=new ImageIcon(img.getScaledInstance(scaled.get(0).getIntX(), scaled.get(0).getIntY(), Image.SCALE_SMOOTH));
@@ -113,12 +115,7 @@ public class JMPCFunctions{
         return ret;
     }
     
-    public static URL getResourcePath(String resId, Class<?> CLASS) {
-        return CLASS.getClassLoader().getResource(resId);
-    }
-    public static URL getResourcePath(String resId){
-        return ClassLoader.getSystemClassLoader().getResource(resId);
-    }
+    
     public static JLabel getImageWithSize(String path, JMVec2 size){
         JLabel ret=new JLabel("NULL");
         Image img=new ImageIcon(path).getImage();
@@ -136,9 +133,9 @@ public class JMPCFunctions{
     public static JLabel getImage(String resId, Class<?> CLASS){
         URL tmp=null;
         if(CLASS==null){
-            tmp=getResourcePath(resId);
+            tmp=JMFunctions.getResourcePath(resId);
         }else{
-            tmp=getResourcePath(resId,CLASS);
+            tmp=JMFunctions.getResourcePath(resId,CLASS);
         }
         if(tmp==null){
             return getImage("");
@@ -147,13 +144,16 @@ public class JMPCFunctions{
     public static Image getImageImg(String resId, Class<?> CLASS){
         URL tmp=null;
         if(CLASS==null){
-            tmp=getResourcePath(resId);
+            tmp=JMFunctions.getResourcePath(resId);
         }else{
-            tmp=getResourcePath(resId,CLASS);
+            tmp=JMFunctions.getResourcePath(resId,CLASS);
         }
         if(tmp==null){
             return null;
         }else return new ImageIcon(tmp.getPath()).getImage();
+    }
+    public static Image getImageFromPath(String path){
+        return new ImageIcon(path).getImage();
     }
     public static void linkTable(JTable jTable, JMTable table){
         DefaultTableModel model = (DefaultTableModel) jTable.getModel();

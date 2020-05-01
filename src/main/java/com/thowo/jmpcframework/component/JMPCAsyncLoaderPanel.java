@@ -15,6 +15,8 @@ import com.thowo.jmjavaframework.lang.JMConstMessage;
  * @author jimi
  */
 public class JMPCAsyncLoaderPanel implements JMAsyncListener{
+    public static final String JM_ASYNC_LOAD_CONFIG="LOADCONFIG";
+    
     private JMPCLoadingSprite loading;
     private OpacityPanel content;
     
@@ -43,7 +45,7 @@ public class JMPCAsyncLoaderPanel implements JMAsyncListener{
             msgId+=JMConstMessage.MSG_ASYNC_STATE_UPDATE;
         }else if(id.equals(JMConnection.JM_ASYNC_DELETE)){
             msgId+=JMConstMessage.MSG_ASYNC_STATE_DELETE;
-        }else if(id.equals(JMPCSplashForm.JM_ASYNC_LOAD_CONFIG)){
+        }else if(id.equals(JM_ASYNC_LOAD_CONFIG)){
             msgId+=JMConstMessage.MSG_ASYNC_STATE_LOAD_CONFIG;
             JMFunctions.trace(msgId);
         }

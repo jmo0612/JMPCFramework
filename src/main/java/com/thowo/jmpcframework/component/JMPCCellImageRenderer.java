@@ -95,7 +95,7 @@ public class JMPCCellImageRenderer extends DefaultTableCellRenderer{
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if(this.isDBValue){
             if(this.isRes){
-                URL tmp=JMPCFunctions.getResourcePath((String) value, this.resClass);
+                URL tmp=JMFunctions.getResourcePath((String) value, this.resClass);
                 if(tmp!=null)this.url=tmp.getPath();
             }else{
                 this.url=(String)value;

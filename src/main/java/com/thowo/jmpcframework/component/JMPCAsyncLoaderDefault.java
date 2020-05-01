@@ -21,6 +21,8 @@ import javax.swing.JTextField;
  * @author jimi
  */
 public class JMPCAsyncLoaderDefault implements JMAsyncListener {
+    public static final String JM_ASYNC_LOAD_CONFIG="LOADCONFIG";
+    
     private JLabel txtMsg;
     private JPanel pnlLocker;
     
@@ -52,7 +54,7 @@ public class JMPCAsyncLoaderDefault implements JMAsyncListener {
             msgId+=JMConstMessage.MSG_ASYNC_STATE_UPDATE;
         }else if(id.equals(JMConnection.JM_ASYNC_DELETE)){
             msgId+=JMConstMessage.MSG_ASYNC_STATE_DELETE;
-        }else if(id.equals(JMPCSplashForm.JM_ASYNC_LOAD_CONFIG)){
+        }else if(id.equals(JM_ASYNC_LOAD_CONFIG)){
             msgId+=JMConstMessage.MSG_ASYNC_STATE_LOAD_CONFIG;
             JMFunctions.trace(msgId);
         }
