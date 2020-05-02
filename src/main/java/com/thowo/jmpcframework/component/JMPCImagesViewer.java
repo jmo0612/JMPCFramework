@@ -13,6 +13,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
@@ -32,6 +36,7 @@ import javax.swing.JScrollPane;
  * @author jimi
  */
 public class JMPCImagesViewer extends JPanel{
+    private List<String> paths;
     private List<Image> images;
     private List<JLabel> lblImgs;
     private List<JPanel> pnlImgs;
@@ -42,7 +47,7 @@ public class JMPCImagesViewer extends JPanel{
     private JButton btnAdd;
     private int width;
     private int height;
-    private int selected=0;
+    private List<Integer> selected;
     private JMVec2 imgSize;
     
     public static JMPCImagesViewer create(){
@@ -56,12 +61,22 @@ public class JMPCImagesViewer extends JPanel{
     }
     
     public JMPCImagesViewer(int width, int height){
-        this.setProp(width, height);
+        this.setProp(null,width, height);
     }
     public JMPCImagesViewer(List<String> paths, int width, int height){
-        int lWidth=width/5;
-        this.setProp(width,height);
-        for(String path:paths){
+        this.setProp(paths,width,height);
+        this.fillFromPaths();
+        this.select(0);
+        this.btnAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JMPCImagesViewer.this.moveRight(0);
+            }
+        });
+    }
+    private void fillFromPaths(){
+        int lWidth=this.width/5;
+        for(String path:this.paths){
             Image tmpImg=JMPCFunctions.getImageFromPath(path);
             this.images.add(tmpImg);
             
@@ -80,20 +95,20 @@ public class JMPCImagesViewer extends JPanel{
         }
         this.addThumbsListener();
         this.addViewListener();
-        this.select(0);
-        
     }
     
-    private void setProp(int width, int height){
+    private void setProp(List<String> paths, int width, int height){
+        this.paths=paths;
+        this.width=width;
+        this.height=height;
         this.images=new ArrayList();
         this.lblImgs=new ArrayList();
         this.pnlImgs=new ArrayList();
+        this.selected=new ArrayList();
         this.pnlList=new JPanel();
         this.pnlView=new JPanel();
         this.lblView=new JLabel();
         this.btnAdd=new JButton("+");
-        this.width=width;
-        this.height=height;
         this.setContainer();
     }
     private void setContainer(){
@@ -140,14 +155,64 @@ public class JMPCImagesViewer extends JPanel{
         this.lblView.setIcon(ico);
         this.lblView.setBounds(scaled.get(1).getIntX(), scaled.get(1).getIntY(), scaled.get(0).getIntX(), scaled.get(0).getIntY());
     }
-    
     private void select(int index){
+        this.clearSelection();
+        this.addSelection(index);
+    }
+    private void addSelection(int index){
         this.pnlImgs.get(index).setBorder(BorderFactory.createEtchedBorder());
+        this.pnlImgs.get(index).setFocusable(true);
+        this.pnlImgs.get(index).requestFocus();
         this.view(index);
+        this.selected.add(index);
+    }
+    private Integer removeAllButLast(){
+        int last=this.selected.get(this.selected.size()-1);
+        this.select(last);
+        return last;
+    }
+    private void removeSelection(int index){
+        if(this.selected.size()>1){
+            for(int i=0;i<this.selected.size();i++){
+                if(this.selected.get(i)==index){
+                    this.selected.remove(i);
+                    this.unselect(index);
+                }
+            }
+        }
+        this.pnlImgs.get(this.selected.get(this.selected.size()-1)).setFocusable(true);
+        this.pnlImgs.get(this.selected.get(this.selected.size()-1)).requestFocus();
+    }
+    private void selectRange(int from, int to){
+        this.clearSelection();
+        int r0,r1;
+        if(from<to){
+            r0=from;
+            r1=to;
+        }else{
+            r1=from;
+            r0=to;
+        }
+        for(int i=r0;i<=r1;i++){
+            this.addSelection(i);
+        }
     }
     
     private void unselect(int index){
         this.pnlImgs.get(index).setBorder(null);
+    }
+    
+    private void clearSelection(){
+        for(int i=0;i<this.images.size();i++){
+            this.unselect(i);
+        }
+        this.selected=new ArrayList();
+    }
+    private boolean isSelected(int index){
+        for(Integer i:this.selected){
+            if(i==index)return true;
+        }
+        return false;
     }
     
     private void addThumbsListener(){
@@ -158,11 +223,14 @@ public class JMPCImagesViewer extends JPanel{
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    JMFunctions.trace("click");
-                    for(int i=0;i<JMPCImagesViewer.this.pnlImgs.size();i++){
-                        if(i==ind)JMPCImagesViewer.this.select(i);
-                        else JMPCImagesViewer.this.unselect(i);
-                    }
+                    if(e.isShiftDown()){
+                        int last=JMPCImagesViewer.this.removeAllButLast();
+                        JMPCImagesViewer.this.selectRange(last, ind);
+                    }else if(e.isControlDown()){
+                        if(!JMPCImagesViewer.this.isSelected(ind))JMPCImagesViewer.this.addSelection(ind);
+                        else JMPCImagesViewer.this.removeSelection(ind);
+                    }else JMPCImagesViewer.this.select(ind);
+                    
                 }
 
                 @Override
@@ -185,6 +253,56 @@ public class JMPCImagesViewer extends JPanel{
                     //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 }
             });
+            p.addKeyListener(new KeyListener() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    int r=39;
+                    int l=37;
+                    /*if(e.getKeyCode()==r && JMPCImagesViewer.this.selected+1<JMPCImagesViewer.this.images.size()){
+                        JMPCImagesViewer.this.select(JMPCImagesViewer.this.selected+1);
+                    }else if(e.getKeyCode()==l && JMPCImagesViewer.this.selected-1>=0){
+                        JMPCImagesViewer.this.select(JMPCImagesViewer.this.selected-1);
+                    }*/
+                    
+                    int toSelect=ind;
+                    if(e.getKeyCode()==r && ind+1<JMPCImagesViewer.this.images.size()){
+                        toSelect=ind+1;
+                        if(e.isControlDown()&& !e.isShiftDown()){
+                            JMPCImagesViewer.this.moveRight(toSelect);
+                        }else{
+                            if(!e.isShiftDown())JMPCImagesViewer.this.select(toSelect);
+                            else {
+                                if(!JMPCImagesViewer.this.isSelected(toSelect))JMPCImagesViewer.this.addSelection(toSelect);
+                                else JMPCImagesViewer.this.removeSelection(ind);
+                            }
+                        }
+                        
+                    }else if(e.getKeyCode()==l && ind-1>=0){
+                        toSelect=ind-1;
+                        if(e.isControlDown()&& !e.isShiftDown()){
+                            JMFunctions.trace("NOT YET");
+                        }else{
+                            if(!e.isShiftDown())JMPCImagesViewer.this.select(toSelect);
+                            else {
+                                if(!JMPCImagesViewer.this.isSelected(toSelect))JMPCImagesViewer.this.addSelection(toSelect);
+                                else JMPCImagesViewer.this.removeSelection(ind);
+                            }
+                        }
+                    }
+                    
+                }
+
+                @Override
+                public void keyReleased(KeyEvent e) {
+                    //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                }
+            });
         }
     }
     private void addViewListener(){
@@ -199,12 +317,13 @@ public class JMPCImagesViewer extends JPanel{
                 float zoom=0.1f*(float)e.getPreciseWheelRotation();
                 int w=imgSize.getIntX();
                 int h=imgSize.getIntY();
-                JMFunctions.trace(w+">"+h);
-                w+=Math.ceil(w*zoom);
-                h+=Math.ceil(h*zoom);
+                w-=Math.ceil(w*zoom);
+                h-=Math.ceil(h*zoom);
                 JMFunctions.trace(zoom+"");
-                JMFunctions.trace(w+","+h);
                 JMVec2 size=new JMVec2(w,h);
+                int minW=JMPCImagesViewer.this.width-JMPCImagesViewer.this.width/4;
+                int minH=JMPCImagesViewer.this.height-JMPCImagesViewer.this.height/4;
+                if(size.getIntX()<minW || size.getIntX()>3000 || size.getIntY()<minH || size.getIntX()>3000)return;
                 List<JMVec2> scaled=JMFunctions.scaledSize(imgSize, size, JMFunctions.SCALE_FIT);
                 ImageIcon ico=new ImageIcon(JMPCImagesViewer.this.imgView.getScaledInstance(scaled.get(0).getIntX(), scaled.get(0).getIntY(), Image.SCALE_SMOOTH));
                 JMPCImagesViewer.this.lblView.setIcon(ico);
@@ -212,10 +331,106 @@ public class JMPCImagesViewer extends JPanel{
             }
         });
     }
-    private int getViewIndex(){
-        for(int i=0;i<this.images.size();i++){
-            if(this.images.get(i)==this.imgView)return i;
+    
+    private void sortSelection(){
+        boolean isSorted;
+        for (int i=0; i<this.selected.size();i++) {
+            isSorted = true;
+            for (int j=1;j<(this.selected.size()-i);j++) {
+                if (this.selected.get(j-1) > this.selected.get(j)) {
+                    this.swapSelection(this.selected.get(j-1), this.selected.get(j));
+                    isSorted = false;
+                }
+            }
+            // is sorted? then break it, avoid useless loop.
+            if (isSorted) break;
+        }
+    }
+    private void swapSelection(int indexValue, int indexValue2){
+        int tmp=indexValue;
+        int i1=this.selectionIndex(indexValue);
+        int i2=this.selectionIndex(indexValue2);
+        if(i1==-1 || i2==-1)return;
+        this.selected.set(i1, this.selected.get(i2));
+        this.selected.set(i2, tmp);
+        
+    }
+    private int selectionIndex(int indexValue){
+        for(int i=0;i<this.selected.size();i++ ){
+            if(this.selected.get(i)==indexValue)return i;
         }
         return -1;
+    }
+    private boolean selectionContains(int indexValue){
+        for(int i=0;i<this.selected.size();i++){
+            if(this.selected.get(i)==indexValue)return true;
+        }
+        return false;
+    }
+    
+    private void moveRight(int to){
+        List<String> newPaths=null;
+        if(this.paths!=null){
+            newPaths=new ArrayList();
+            for(int i=0;i<this.paths.size();i++){
+                if(i==to+1){
+                    for(int j=0;j<this.selected.size();j++){
+                        newPaths.add(this.paths.get(this.selected.get(j)));
+                    }
+                }
+                if(!this.selectionContains(i))newPaths.add(this.paths.get(i));
+            }
+        }
+        List<Image> newImages=new ArrayList();
+        for(int i=0;i<this.images.size();i++){
+            if(i==to+1){
+                for(int j=0;j<this.selected.size();j++){
+                    newImages.add(this.images.get(this.selected.get(j)));
+                }
+            }
+            if(!this.selectionContains(i))newImages.add(this.images.get(i));
+        }
+        
+        List<JLabel> newLblImgs=new ArrayList();
+        for(int i=0;i<this.lblImgs.size();i++){
+            if(i==to+1){
+                for(int j=0;j<this.selected.size();j++){
+                    newLblImgs.add(this.lblImgs.get(this.selected.get(j)));
+                }
+            }
+            if(!this.selectionContains(i))newLblImgs.add(this.lblImgs.get(i));
+        }
+        
+        List<JPanel> newPnlImgs=new ArrayList();
+        for(int i=0;i<this.pnlImgs.size();i++){
+            if(i==to+1){
+                for(int j=0;j<this.selected.size();j++){
+                    newPnlImgs.add(this.pnlImgs.get(this.selected.get(j)));
+                }
+            }
+            if(!this.selectionContains(i))newPnlImgs.add(this.pnlImgs.get(i));
+        }
+        
+        this.paths=newPaths;
+        this.images=newImages;
+        this.lblImgs=newLblImgs;
+        this.pnlImgs=newPnlImgs;
+        
+        this.pnlList.removeAll();
+        for(JPanel p:this.pnlImgs){
+            this.pnlList.add(p);
+        }
+        
+        List<Integer> newSelected=new ArrayList();
+        int start=to+1;
+        for(int i=0;i<this.selected.size();i++){
+            newSelected.add(start++);
+        }
+        this.selected=newSelected;
+        for(int i=0;i<this.selected.size();i++){
+            if(i==0)this.select(this.selected.get(i));
+            else this.addSelection(this.selected.get(i));
+        }
+        this.addThumbsListener();
     }
 }

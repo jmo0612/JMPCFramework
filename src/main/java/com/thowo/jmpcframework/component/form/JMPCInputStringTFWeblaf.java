@@ -6,6 +6,8 @@
 package com.thowo.jmpcframework.component.form;
 
 import com.alee.laf.text.WebTextField;
+import com.thowo.jmjavaframework.JMDataContainer;
+import com.thowo.jmjavaframework.JMFormInterface;
 import com.thowo.jmjavaframework.JMFunctions;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -16,6 +18,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.BorderFactory;
@@ -31,14 +35,18 @@ import javax.swing.event.DocumentListener;
  *
  * @author jimi
  */
-public class JMPCInputStringTFWeblaf extends JPanel {
+public class JMPCInputStringTFWeblaf extends JPanel implements JMFormInterface{
     private JLabel label;
     private JLabel error;
     private JPanel errPanel;
     private WebTextField text;
     private String value;
     private LineBorder border;
+    private JMDataContainer dc;
     
+    public static JMPCInputStringTFWeblaf create(String label,String prompt, int maxChar, int maxWidth, boolean horizontal){
+        return new JMPCInputStringTFWeblaf("","","",label,prompt,maxChar,maxWidth,horizontal);
+    }
     public static JMPCInputStringTFWeblaf create(String value, String text, String error, String label, String prompt, int maxChar, int maxWidth, boolean horizontal){
         return new JMPCInputStringTFWeblaf(value,text,error,label,prompt,maxChar,maxWidth,horizontal);
     }
@@ -50,7 +58,9 @@ public class JMPCInputStringTFWeblaf extends JPanel {
             this.setPropVertical(value, text, error, label, prompt, maxChar, maxWidth);
         }
     }
-    
+    public void setLabel(String label){
+        this.label.setText(label);
+    }
     private void setProp(String value, String text, String error, String label, String prompt, int maxChar, int maxWidth){
         JLabel dummy=new JLabel();
         for(int i=0;i<maxWidth/2;i++){
@@ -188,6 +198,49 @@ public class JMPCInputStringTFWeblaf extends JPanel {
                 }
             }
         });
+        this.text.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                if(JMPCInputStringTFWeblaf.this.dc==null)return;
+                JMPCInputStringTFWeblaf.this.displayText(JMPCInputStringTFWeblaf.this.dc.getValueAsString());
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                if(JMPCInputStringTFWeblaf.this.dc==null)return;
+                JMPCInputStringTFWeblaf.this.dc.setValueAsString(JMPCInputStringTFWeblaf.this.text.getText());
+                JMPCInputStringTFWeblaf.this.displayText(JMPCInputStringTFWeblaf.this.dc.getValueAsString());
+            }
+        });
         
+    }
+
+    @Override
+    public void displayText(String text) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.text.setText(this.value);
+    }
+
+    @Override
+    public void displayError(String errMsg) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.showError(errMsg);
+    }
+
+    @Override
+    public void displayHint(String hint) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.text.addToolTip(hint).setVisible(true);
+    }
+
+    @Override
+    public void setDataContainer(JMDataContainer dataContainer) {
+        this.dc=dataContainer;
+    }
+    @Override
+    public void setHidden(boolean hidden) {
+        this.setVisible(!hidden);
     }
 }
