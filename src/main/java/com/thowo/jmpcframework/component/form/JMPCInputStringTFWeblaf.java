@@ -7,8 +7,9 @@ package com.thowo.jmpcframework.component.form;
 
 import com.alee.laf.text.WebTextField;
 import com.thowo.jmjavaframework.JMDataContainer;
-import com.thowo.jmjavaframework.JMFormInterface;
+import com.thowo.jmjavaframework.JMInputInterface;
 import com.thowo.jmjavaframework.JMFunctions;
+import com.thowo.jmjavaframework.lang.JMConstMessage;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,6 +23,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -35,12 +39,13 @@ import javax.swing.event.DocumentListener;
  *
  * @author jimi
  */
-public class JMPCInputStringTFWeblaf extends JPanel implements JMFormInterface{
+public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
     private JLabel label;
     private JLabel error;
     private JPanel errPanel;
     private WebTextField text;
     private String value;
+    private Object valueObject;
     private LineBorder border;
     private JMDataContainer dc;
     
@@ -198,20 +203,30 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMFormInterface{
                 }
             }
         });
+        
         this.text.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                JMFunctions.trace("GAIN: "+JMPCInputStringTFWeblaf.this.value);
                 if(JMPCInputStringTFWeblaf.this.dc==null)return;
-                JMPCInputStringTFWeblaf.this.displayText(JMPCInputStringTFWeblaf.this.dc.getValueAsString());
+                JMPCInputStringTFWeblaf.this.text.setText(JMPCInputStringTFWeblaf.this.value);
+                //JMPCInputStringTFWeblaf.this.text.setText("hahah");
             }
 
             @Override
             public void focusLost(FocusEvent e) {
+                JMFunctions.trace("LOST: "+JMPCInputStringTFWeblaf.this.text.getText());
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 if(JMPCInputStringTFWeblaf.this.dc==null)return;
-                JMPCInputStringTFWeblaf.this.dc.setValueAsString(JMPCInputStringTFWeblaf.this.text.getText());
-                JMPCInputStringTFWeblaf.this.displayText(JMPCInputStringTFWeblaf.this.dc.getValueAsString());
+                try {
+                    JMPCInputStringTFWeblaf.this.dc.setValue(JMPCInputStringTFWeblaf.this.text.getText());
+                    JMPCInputStringTFWeblaf.this.hideError();
+                } catch (ParseException ex) {
+                    JMPCInputStringTFWeblaf.this.displayError(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_DATE_INVALID));
+                }catch (NumberFormatException ex) {
+                    JMPCInputStringTFWeblaf.this.displayError(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_NUMBER_INVALID));
+                }
             }
         });
         
@@ -219,8 +234,10 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMFormInterface{
 
     @Override
     public void displayText(String text) {
+        
+        //JMFunctions.trace(text);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        this.text.setText(this.value);
+        this.text.setText(text);
     }
 
     @Override
@@ -238,9 +255,21 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMFormInterface{
     @Override
     public void setDataContainer(JMDataContainer dataContainer) {
         this.dc=dataContainer;
+        this.value=this.dc.getValueAsString();
     }
     @Override
     public void setHidden(boolean hidden) {
         this.setVisible(!hidden);
     }
+
+    @Override
+    public void setValueString(String value) {
+        this.value=value;
+    }
+
+    @Override
+    public void setValueObject(Object value) {
+        this.valueObject=value;
+    }
+
 }

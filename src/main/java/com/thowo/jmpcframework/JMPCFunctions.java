@@ -157,6 +157,8 @@ public class JMPCFunctions{
     }
     public static void linkTable(JTable jTable, JMTable table){
         DefaultTableModel model = (DefaultTableModel) jTable.getModel();
+        model.setRowCount(0);
+        if(table.isEmpty())return;
         table.firstRow();
         do{
             model.addRow(table.getTableData());
