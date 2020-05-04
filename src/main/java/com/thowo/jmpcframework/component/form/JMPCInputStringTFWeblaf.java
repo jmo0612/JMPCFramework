@@ -48,6 +48,8 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
     private Object valueObject;
     private LineBorder border;
     private JMDataContainer dc;
+    private boolean editMode;
+    private boolean editable;
     
     public static JMPCInputStringTFWeblaf create(String label,String prompt, int maxChar, int maxWidth, boolean horizontal){
         return new JMPCInputStringTFWeblaf("","","",label,prompt,maxChar,maxWidth,horizontal);
@@ -182,6 +184,23 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
         this.text.setForeground(null);
         this.errPanel.setVisible(false);
     }
+    public boolean onEditMode(){
+        return this.editMode;
+    }
+    public void setEditMode(boolean editMode){
+        this.editMode=editMode;
+        this.text.setEditable(this.editable && editMode);
+    }
+    public boolean editable(){
+        return this.editable;
+    }
+    public JMPCInputStringTFWeblaf setEditable(boolean editable){
+        this.editable=editable;
+        return this;
+    }
+    public void setText(String text){
+        this.text.setText(text);
+    }
     
     private void addListeners(){
         this.text.addKeyListener(new KeyListener() {
@@ -197,37 +216,38 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
 
             @Override
             public void keyReleased(KeyEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                if(JMPCInputStringTFWeblaf.this.text.getText().equals("")){
-                    JMPCInputStringTFWeblaf.this.hideError();
+                if(JMPCInputStringTFWeblaf.this.editMode){
+                    if(JMPCInputStringTFWeblaf.this.text.getText().equals("")){
+                        JMPCInputStringTFWeblaf.this.hideError();
+                    }
                 }
-            }
+            }//EXIST
         });
         
         this.text.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                JMFunctions.trace("GAIN: "+JMPCInputStringTFWeblaf.this.value);
-                if(JMPCInputStringTFWeblaf.this.dc==null)return;
-                JMPCInputStringTFWeblaf.this.text.setText(JMPCInputStringTFWeblaf.this.value);
-                //JMPCInputStringTFWeblaf.this.text.setText("hahah");
-            }
+                if(JMPCInputStringTFWeblaf.this.editMode){
+                    if(JMPCInputStringTFWeblaf.this.dc==null)return;
+                    JMPCInputStringTFWeblaf.this.text.setText(JMPCInputStringTFWeblaf.this.value);
+                }
+            }//EXIST
 
             @Override
             public void focusLost(FocusEvent e) {
-                JMFunctions.trace("LOST: "+JMPCInputStringTFWeblaf.this.text.getText());
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                if(JMPCInputStringTFWeblaf.this.dc==null)return;
-                try {
-                    JMPCInputStringTFWeblaf.this.dc.setValue(JMPCInputStringTFWeblaf.this.text.getText());
-                    JMPCInputStringTFWeblaf.this.hideError();
-                } catch (ParseException ex) {
-                    JMPCInputStringTFWeblaf.this.displayError(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_DATE_INVALID));
-                }catch (NumberFormatException ex) {
-                    JMPCInputStringTFWeblaf.this.displayError(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_NUMBER_INVALID));
+                if(JMPCInputStringTFWeblaf.this.editMode){
+                    if(JMPCInputStringTFWeblaf.this.dc==null)return;
+                    try {
+                        //JMFunctions.trace("EDIT_MODE: "+JMPCInputStringTFWeblaf.this.editMode+"    "+JMPCInputStringTFWeblaf.this.text.getText());
+                        JMPCInputStringTFWeblaf.this.dc.setValue(JMPCInputStringTFWeblaf.this.text.getText());
+                        JMPCInputStringTFWeblaf.this.hideError();
+                    } catch (ParseException ex) {
+                        JMPCInputStringTFWeblaf.this.displayError(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_DATE_INVALID));
+                    }catch (NumberFormatException ex) {
+                        JMPCInputStringTFWeblaf.this.displayError(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_NUMBER_INVALID));
+                    }
                 }
-            }
+            }//EXIST
         });
         
     }

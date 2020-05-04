@@ -59,7 +59,7 @@ public class JMPCForm extends JFrame {
         JButton tes2=new JButton("hihi");
         p.add(tes);
         p.add(tes2);
-        bg.add(p);
+        //bg.add(p);
         bg.add(this.loadingSprite);
         bg.add(content);
         content.setOpacity(1.0f);

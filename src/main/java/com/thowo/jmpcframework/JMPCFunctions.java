@@ -24,10 +24,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.RowFilter;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.synth.SynthLookAndFeel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 
 
@@ -141,6 +144,19 @@ public class JMPCFunctions{
             return getImage("");
         }else return getImage(tmp.getPath());
     }
+    public static JPanel getImageOpaque(String resId, Class<?> CLASS, JMVec2 size){
+        Image img=new ImageIcon(CLASS.getClassLoader().getResource(resId)).getImage();
+        JMVec2 imgSize=new JMVec2(img.getWidth(null),img.getHeight(null));
+        if(size==null)size=imgSize;
+        List<JMVec2> scaled=JMFunctions.scaledSize(imgSize, size, JMFunctions.SCALE_FIT);
+        ImageIcon ico=new ImageIcon(img.getScaledInstance(scaled.get(0).getIntX(), scaled.get(0).getIntY(), Image.SCALE_SMOOTH));
+        JLabel lblImg=new JLabel(ico);
+        JPanel panel=new JPanel();
+        panel.setOpaque(false);
+        panel.add(lblImg);
+        lblImg.setBounds(scaled.get(1).getIntX(), scaled.get(1).getIntY(), scaled.get(0).getIntX(), scaled.get(0).getIntY());
+        return panel;
+    }
     public static Image getImageImg(String resId, Class<?> CLASS){
         URL tmp=null;
         if(CLASS==null){
@@ -159,9 +175,82 @@ public class JMPCFunctions{
         DefaultTableModel model = (DefaultTableModel) jTable.getModel();
         model.setRowCount(0);
         if(table.isEmpty())return;
-        table.firstRow();
+        table.firstRow(false);
         do{
             model.addRow(table.getTableData());
-        }while(table.nextRow()!=null);
+        }while(table.nextRow(false)!=null);
+        jTableMoveFirst(jTable,0);
+    }
+    public static void jTableMoveFirst(JTable table, int backUpRow){
+        if(table==null)return;
+        jTableClearFilter(table, backUpRow);
+        if(table.getRowCount()>0)table.setRowSelectionInterval(0, 0);
+    }
+    public static void jTableMoveLast(JTable table, int backUpRow){
+        if(table==null)return;
+        jTableClearFilter(table, backUpRow);
+        if(table.getRowCount()>0)table.setRowSelectionInterval(table.getRowCount()-1, table.getRowCount()-1);
+    }
+    public static void jTableMoveNext(JTable table, int backUpRow){
+        if(table==null)return;
+        jTableClearFilter(table, backUpRow);
+        if(table.getSelectedRow()+1<table.getRowCount())table.setRowSelectionInterval(table.getSelectedRow()+1, table.getSelectedRow()+1);
+    }
+    public static void jTableMovePrev(JTable table, int backUpRow){
+        if(table==null)return;
+        jTableClearFilter(table, backUpRow);
+        if(table.getSelectedRow()-1>=0)table.setRowSelectionInterval(table.getSelectedRow()-1, table.getSelectedRow()-1);
+    }
+    public static int jTableFilter(JTable table, String search, int backUpRow){
+        if(table==null)return -1;
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+        if(search.trim().length()==0){
+            sorter.setRowFilter(null);
+        }else{
+            sorter.setRowFilter(RowFilter.regexFilter("?i"+search));
+        }
+        
+        return backUpRow;
+    }
+    public static void jTableClearFilter(JTable table, int backUpRow){
+        if(table==null)return;
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+        sorter.setRowFilter(null);
+        if(backUpRow>=0 && backUpRow<table.getRowCount())table.setRowSelectionInterval(backUpRow, backUpRow);
+    }
+    public static void jTableFindByKeys(JTable table,List<Integer> keyColumns, List<String> keyValues){
+        if(keyColumns==null || keyValues==null || table==null)return;
+        if(keyColumns.size()!=keyValues.size())return;
+        
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        //REMOVE FILTER FIRST
+        boolean match=true;
+        for(int i=0;i<keyColumns.size();i++){
+            String val=(String) model.getValueAt(table.getSelectedRow(), keyColumns.get(i));
+            if(!val.equals(keyValues.get(i))){
+                match=false;
+                break;
+            }
+        }
+        if(match)return;
+        
+        for(int i=0;i<table.getRowCount();i++){
+            match=true;
+            for(int j=0;j<table.getColumnCount();j++){
+                if(keyColumns.contains(j)){
+                    if(model.getValueAt(i, j).equals(keyValues.get(j))){
+                        match=false;
+                        break;
+                    }
+                }
+            }
+            if(match){
+                table.setRowSelectionInterval(i, i);
+                break;
+            }
+        }
+        if(!match)JMFunctions.trace("SOMETHING WRONG");
     }
 }
