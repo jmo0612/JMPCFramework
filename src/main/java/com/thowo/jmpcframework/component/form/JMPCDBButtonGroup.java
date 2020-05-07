@@ -6,22 +6,30 @@
 package com.thowo.jmpcframework.component.form;
 
 import com.thowo.jmjavaframework.JMFormInterface;
+import com.thowo.jmjavaframework.JMFunctions;
+import com.thowo.jmjavaframework.JMInputInterface;
 import com.thowo.jmjavaframework.JMVec2;
+import com.thowo.jmjavaframework.lang.JMConstMessage;
+import com.thowo.jmjavaframework.table.JMCell;
+import com.thowo.jmjavaframework.table.JMRow;
 import com.thowo.jmjavaframework.table.JMTable;
 import com.thowo.jmpcframework.component.JMPCButton;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
  *
  * @author jimi
  */
-public class JMPCDBButtonGroup{
+public class JMPCDBButtonGroup implements JMFormInterface{
     private JPanel op=new JPanel();
     private JPanel rec=new JPanel();
-    private JMFormInterface fi;
     private JMTable table;
+    private String formTitle;
     
     private JMPCButton btnAdd;
     private JMPCButton btnEdit;
@@ -38,6 +46,10 @@ public class JMPCDBButtonGroup{
     private int defWidth=50;
     private int defHeight=10;
     
+    
+    public static JMPCDBButtonGroup create(JMTable table){
+        return new JMPCDBButtonGroup(table);
+    }
     
     public JPanel getNavigationPanel(){
         return this.rec;
@@ -83,103 +95,93 @@ public class JMPCDBButtonGroup{
         this.stateInit();
     }
     
-    public JMPCDBButtonGroup(JMFormInterface fi, JMTable table){
-        this.fi=fi;
-        this.table=table;
-        this.setProp();
-    }
     public JMPCDBButtonGroup(JMTable table){
         this.table=table;
+        this.table.addInterface(this);
         this.setProp();
     }
-    public void setFormInterface(JMFormInterface fi){
-        this.fi=fi;
-        this.addListener();
+    
+    public void btnCancelClick(){
+        this.table.cancelEdit(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_CANCEL_EDITING)+" "+formTitle, JOptionPane.YES_OPTION);
+    }
+    public void btnAddClick(){
+        List<JMCell> cells=this.table.getCurrentRow().getCells();
+        List<JMInputInterface> objs=new ArrayList();
+        for(JMCell cell:cells)objs.add(JMPCCellObject.create());
+        this.table.addNewRow(objs);
     }
     
     private void addListener(){
         this.btnAdd.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateAdd();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionAdd();
+                JMPCDBButtonGroup.this.btnAddClick();
             }
         });
         this.btnEdit.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateEdit();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionEdit();
+                JMPCDBButtonGroup.this.table.editRow();
             }
         });
         this.btnDelete.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateDelete();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionDelete();
+                //JMPCDBButtonGroup.this.stateDelete();
             }
         });
         this.btnSave.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateSave();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionSave();
+                JMPCDBButtonGroup.this.table.save();
             }
         });
         this.btnPrint.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.statePrint();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionPrint();
+                //JMPCDBButtonGroup.this.statePrint();
             }
         });
         this.btnNext.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateNav();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionNext();
+                JMPCDBButtonGroup.this.table.nextRow(true);
             }
         });
         this.btnPrev.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateNav();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionPrev();
+                JMPCDBButtonGroup.this.table.prevRow(true);
             }
         });
         this.btnFirst.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateNav();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionFirst();
+                JMPCDBButtonGroup.this.table.firstRow(true);
             }
         });
         this.btnLast.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateNav();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionLast();
+                JMPCDBButtonGroup.this.table.lastRow(true);
             }
         });
         this.btnView.setAction(new Runnable(){
             @Override
             public void run() {
                 JMPCDBButtonGroup.this.stateView();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionView();
             }
         });
         this.btnRefresh.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateRefresh();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionRefresh();
+                //JMPCDBButtonGroup.this.stateRefresh();
             }
         });
         this.btnCancel.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateRefresh();
-                if(JMPCDBButtonGroup.this.fi!=null)JMPCDBButtonGroup.this.fi.actionCancel();
+                JMPCDBButtonGroup.this.btnCancelClick();
             }
         });
     }
@@ -271,8 +273,6 @@ public class JMPCDBButtonGroup{
     }
     
     
-    
-    
 
     public JMPCButton getBtnCancel() {
         return btnCancel;
@@ -345,6 +345,71 @@ public class JMPCDBButtonGroup{
     }
     public void setBtnLast(JMPCButton btnLast) {
         this.btnLast = btnLast;
+    }
+
+    @Override
+    public void actionAdd(JMRow rowAdded) {
+        this.stateAdd();
+    }
+
+    @Override
+    public void actionDelete(JMRow rowDeleted) {
+        this.stateDelete();
+    }
+
+    @Override
+    public void actionSave(String updateQuery) {
+        this.stateSave();
+    }
+
+    @Override
+    public void actionEdit(JMRow rowEdited) {
+        this.stateEdit();
+    }
+
+    @Override
+    public void actionPrint(JMRow rowPrinted) {
+        this.statePrint();
+    }
+
+    @Override
+    public void actionRefresh(JMRow rowRefreshed) {
+        this.stateRefresh();
+    }
+
+    @Override
+    public void actionView(JMRow rowViewed) {
+        this.stateView();
+    }
+
+    @Override
+    public void actionNext(JMRow nextRow) {
+        this.stateNav();
+    }
+
+    @Override
+    public void actionPrev(JMRow prevRow) {
+        this.stateNav();
+    }
+
+    @Override
+    public void actionFirst(JMRow firstRow) {
+        this.stateNav();
+    }
+
+    @Override
+    public void actionLast(JMRow lastRow) {
+        this.stateNav();
+    }
+
+    @Override
+    public void gotoRecord(JMRow currentRow) {
+        this.stateNav();
+    }
+
+    @Override
+    public void actionCancel(JMRow rowCanceled, boolean canceled) {
+        if(canceled)this.stateInit();
     }
     
 }

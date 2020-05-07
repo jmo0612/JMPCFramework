@@ -171,6 +171,7 @@ public class JMPCFunctions{
     public static Image getImageFromPath(String path){
         return new ImageIcon(path).getImage();
     }
+    /*
     public static void linkTable(JTable jTable, JMTable table){
         DefaultTableModel model = (DefaultTableModel) jTable.getModel();
         model.setRowCount(0);
@@ -253,4 +254,5 @@ public class JMPCFunctions{
         }
         if(!match)JMFunctions.trace("SOMETHING WRONG");
     }
+    */
 }

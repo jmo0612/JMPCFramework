@@ -10,6 +10,7 @@ import com.thowo.jmjavaframework.JMDataContainer;
 import com.thowo.jmjavaframework.JMInputInterface;
 import com.thowo.jmjavaframework.JMFunctions;
 import com.thowo.jmjavaframework.lang.JMConstMessage;
+import com.thowo.jmjavaframework.table.JMRow;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -30,7 +31,9 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -50,6 +53,7 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
     private JMDataContainer dc;
     private boolean editMode;
     private boolean editable;
+    private boolean editingText=false;
     
     public static JMPCInputStringTFWeblaf create(String label,String prompt, int maxChar, int maxWidth, boolean horizontal){
         return new JMPCInputStringTFWeblaf("","","",label,prompt,maxChar,maxWidth,horizontal);
@@ -187,7 +191,12 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
     public boolean onEditMode(){
         return this.editMode;
     }
-    public void setEditMode(boolean editMode){
+    public void setEditMode(boolean editMode, JMRow currentRow){
+        if(!editMode){
+            new JTextField().grabFocus();
+        }
+        int col=dc.getColIndex();
+        this.dc=currentRow.getCells().get(col).getDataContainer();
         this.editMode=editMode;
         this.text.setEditable(this.editable && editMode);
     }
@@ -216,48 +225,87 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
 
             @Override
             public void keyReleased(KeyEvent e) {
-                if(JMPCInputStringTFWeblaf.this.editMode){
+                /*if(JMPCInputStringTFWeblaf.this.editMode){
                     if(JMPCInputStringTFWeblaf.this.text.getText().equals("")){
                         JMPCInputStringTFWeblaf.this.hideError();
                     }
-                }
+                    JMPCInputStringTFWeblaf.this.hideError();
+                    if(JMPCInputStringTFWeblaf.this.dc==null)return;
+                    JMPCInputStringTFWeblaf.this.dc.setValueString(JMPCInputStringTFWeblaf.this.text.getText());
+                }*/
             }//EXIST
         });
-        
+        this.text.getDocument().addDocumentListener(new DocumentListener(){
+            private void update(){
+                /*Runnable doUpdate=new Runnable(){
+                    @Override
+                    public void run() {
+                        
+                    }
+                };
+                SwingUtilities.invokeLater(doUpdate);*/
+                if(JMPCInputStringTFWeblaf.this.editingText){
+                    if(JMPCInputStringTFWeblaf.this.editMode){
+                        JMPCInputStringTFWeblaf.this.hideError();
+                        if(JMPCInputStringTFWeblaf.this.dc==null)return;
+                        JMPCInputStringTFWeblaf.this.dc.setValueString(JMPCInputStringTFWeblaf.this.text.getText(),false,false);
+                    }
+                }
+            }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                this.update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                this.update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                this.update();
+            }
+        });
         this.text.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 if(JMPCInputStringTFWeblaf.this.editMode){
                     if(JMPCInputStringTFWeblaf.this.dc==null)return;
-                    JMPCInputStringTFWeblaf.this.text.setText(JMPCInputStringTFWeblaf.this.value);
+                    if(JMPCInputStringTFWeblaf.this.valueObject!=null)JMPCInputStringTFWeblaf.this.text.setText(JMPCInputStringTFWeblaf.this.value);
+                    JMPCInputStringTFWeblaf.this.text.selectAll();
+                    JMPCInputStringTFWeblaf.this.editingText=true;
                 }
             }//EXIST
 
             @Override
             public void focusLost(FocusEvent e) {
                 if(JMPCInputStringTFWeblaf.this.editMode){
+                    JMPCInputStringTFWeblaf.this.editingText=false;
+                    if(JMPCInputStringTFWeblaf.this.text.getText().equals(""))JMPCInputStringTFWeblaf.this.hideError();
                     if(JMPCInputStringTFWeblaf.this.dc==null)return;
-                    try {
-                        //JMFunctions.trace("EDIT_MODE: "+JMPCInputStringTFWeblaf.this.editMode+"    "+JMPCInputStringTFWeblaf.this.text.getText());
-                        JMPCInputStringTFWeblaf.this.dc.setValue(JMPCInputStringTFWeblaf.this.text.getText());
-                        JMPCInputStringTFWeblaf.this.hideError();
-                    } catch (ParseException ex) {
-                        JMPCInputStringTFWeblaf.this.displayError(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_DATE_INVALID));
-                    }catch (NumberFormatException ex) {
-                        JMPCInputStringTFWeblaf.this.displayError(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_NUMBER_INVALID));
-                    }
+                    if(JMPCInputStringTFWeblaf.this.valueObject!=null)JMPCInputStringTFWeblaf.this.dc.setValueString(JMPCInputStringTFWeblaf.this.value,true,false);
                 }
             }//EXIST
         });
         
     }
+    
 
+    private void alignText(int align){
+        if(align==JMDataContainer.ALIGN_LEFT)this.text.setHorizontalAlignment(JTextField.LEFT);
+        else if(align==JMDataContainer.ALIGN_CENTER)this.text.setHorizontalAlignment(JTextField.CENTER);
+        else this.text.setHorizontalAlignment(JTextField.RIGHT);
+    }
     @Override
-    public void displayText(String text) {
+    public void displayText(String text, int JMDataContainerConstantAlign) {
         
         //JMFunctions.trace(text);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.editingText=false;
+        this.hideError();
         this.text.setText(text);
+        this.alignText(JMDataContainerConstantAlign);
     }
 
     @Override
@@ -275,7 +323,7 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
     @Override
     public void setDataContainer(JMDataContainer dataContainer) {
         this.dc=dataContainer;
-        this.value=this.dc.getValueAsString();
+        //this.value=this.dc.getValueAsString();
     }
     @Override
     public void setHidden(boolean hidden) {
@@ -285,6 +333,7 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
     @Override
     public void setValueString(String value) {
         this.value=value;
+        //this.hideError();
     }
 
     @Override
