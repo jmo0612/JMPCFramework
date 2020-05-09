@@ -1,6 +1,11 @@
 package com.thowo.jmpcframework;
 
 import com.alee.laf.WebLookAndFeel;
+import com.alee.managers.style.StyleId;
+import com.alee.managers.style.StyleManager;
+import com.alee.skin.dark.DarkSkin;
+import com.alee.skin.modena.ModenaSkin;
+import com.alee.skin.web.WebSkin;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.security.NoTypePermission;
 import com.thoughtworks.xstream.security.NullPermission;
@@ -21,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -55,12 +61,16 @@ public class JMPCFunctions{
             Logger.getLogger(JMPCFunctions.class.getName()).log(Level.SEVERE, null, ex);
         }*/
         
-        try {
+        /*try {
             UIManager.setLookAndFeel ( new WebLookAndFeel());
+            
         } catch (UnsupportedLookAndFeelException ex) {
             Logger.getLogger(JMPCFunctions.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
         //BasicTextFieldUI a;
+        WebLookAndFeel.install();
+        
+        //StyleManager.addExtensions ( null);
     }
     public static void init(String localeId){
         JMFunctions.setUIListener(new JMPCUIMessenger());

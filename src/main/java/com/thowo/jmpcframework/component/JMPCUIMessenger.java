@@ -5,7 +5,11 @@
  */
 package com.thowo.jmpcframework.component;
 
+import com.thowo.jmjavaframework.JMFunctions;
 import com.thowo.jmjavaframework.JMUIListener;
+import com.thowo.jmjavaframework.lang.JMConstMessage;
+import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import javax.swing.JOptionPane;
 
 /**
@@ -21,7 +25,7 @@ public class JMPCUIMessenger implements JMUIListener {
 
     @Override
     public void messageBox(String message) {
-        JOptionPane.showMessageDialog(null, message);
+        JOptionPane.showMessageDialog(null, message, JMFunctions.getMessege(JMConstMessage.MSG_UI+JMConstMessage.MSG_UI_MESSAGE), JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
@@ -40,6 +44,11 @@ public class JMPCUIMessenger implements JMUIListener {
                options[def] //default button
             );
         return result;
+    }
+
+    @Override
+    public void errorBox(String message) {
+        JOptionPane.showMessageDialog(null, message, JMFunctions.getMessege(JMConstMessage.MSG_UI+JMConstMessage.MSG_UI_ERROR), JOptionPane.ERROR_MESSAGE);
     }
     
 }

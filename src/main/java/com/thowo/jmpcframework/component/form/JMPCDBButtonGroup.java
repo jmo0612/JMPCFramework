@@ -16,10 +16,16 @@ import com.thowo.jmjavaframework.table.JMTable;
 import com.thowo.jmpcframework.component.JMPCButton;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -47,8 +53,8 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     private int defHeight=10;
     
     
-    public static JMPCDBButtonGroup create(JMTable table){
-        return new JMPCDBButtonGroup(table);
+    public static JMPCDBButtonGroup create(JMTable table, String formTitle,boolean editing,boolean adding){
+        return new JMPCDBButtonGroup(table, formTitle,editing,adding);
     }
     
     public JPanel getNavigationPanel(){
@@ -58,7 +64,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         return this.op;
     }
     
-    private void setProp(){
+    private void setProp(boolean editing,boolean adding){
         this.btnAdd=JMPCButton.create("Add", JMVec2.create(this.defWidth, this.defHeight));
         this.btnEdit=JMPCButton.create("Edit", JMVec2.create(this.defWidth, this.defHeight));
         this.btnDelete=JMPCButton.create("Delete", JMVec2.create(this.defWidth, this.defHeight));
@@ -71,10 +77,18 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         this.btnView=JMPCButton.create("View", JMVec2.create(this.defWidth, this.defHeight));
         this.btnRefresh=JMPCButton.create("Refresh", JMVec2.create(this.defWidth, this.defHeight));
         this.btnCancel=JMPCButton.create("Cancel", JMVec2.create(this.defWidth, this.defHeight));
-        this.view();
+        this.view(editing,adding);
+    }
+    private void display(boolean editing,boolean adding){
+        if(editing){
+            if(adding)this.stateAdd();
+            else this.stateEdit();
+        }else{
+            this.stateInit();
+        }
     }
     
-    private void view(){
+    private void view(boolean editing,boolean adding){
         
         op.setOpaque(false);
         op.add(this.btnAdd);
@@ -92,24 +106,17 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         rec.add(this.btnNext);
         rec.add(this.btnLast);
         this.addListener();
-        this.stateInit();
+        this.display(editing, adding);
     }
     
-    public JMPCDBButtonGroup(JMTable table){
+    public JMPCDBButtonGroup(JMTable table, String formTitle,boolean editing,boolean adding){
         this.table=table;
+        
+        this.formTitle=formTitle;
         this.table.addInterface(this);
-        this.setProp();
+        this.setProp(editing,adding);
     }
     
-    public void btnCancelClick(){
-        this.table.cancelEdit(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_CANCEL_EDITING)+" "+formTitle, JOptionPane.YES_OPTION);
-    }
-    public void btnAddClick(){
-        List<JMCell> cells=this.table.getCurrentRow().getCells();
-        List<JMInputInterface> objs=new ArrayList();
-        for(JMCell cell:cells)objs.add(JMPCCellObject.create());
-        this.table.addNewRow(objs);
-    }
     
     private void addListener(){
         this.btnAdd.setAction(new Runnable(){
@@ -127,7 +134,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         this.btnDelete.setAction(new Runnable(){
             @Override
             public void run() {
-                //JMPCDBButtonGroup.this.stateDelete();
+                JMPCDBButtonGroup.this.btnDeleteClick();
             }
         });
         this.btnSave.setAction(new Runnable(){
@@ -139,7 +146,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         this.btnPrint.setAction(new Runnable(){
             @Override
             public void run() {
-                //JMPCDBButtonGroup.this.statePrint();
+                
             }
         });
         this.btnNext.setAction(new Runnable(){
@@ -169,13 +176,13 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         this.btnView.setAction(new Runnable(){
             @Override
             public void run() {
-                JMPCDBButtonGroup.this.stateView();
+                JMPCDBButtonGroup.this.btnViewClick();
             }
         });
         this.btnRefresh.setAction(new Runnable(){
             @Override
             public void run() {
-                //JMPCDBButtonGroup.this.stateRefresh();
+                JMPCDBButtonGroup.this.btnRefreshClick();
             }
         });
         this.btnCancel.setAction(new Runnable(){
@@ -186,8 +193,35 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         });
     }
     
+    
+    
+    public void btnCancelClick(){
+        this.table.cancelEdit(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_CANCEL_EDITING)+" "+formTitle+"?", JOptionPane.YES_OPTION);
+    }
+    public void btnDeleteClick(){
+        this.table.deleteRow(this.table.getCurrentRow(), JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_DELETE)+" "+formTitle+"?", JOptionPane.YES_OPTION);
+    }
+    public void btnAddClick(){
+        //List<String> fieldNames=this.table.getStyle().getFieldNames();
+        //List<JMInputInterface> objs=new ArrayList();
+        //for(String fieldName:fieldNames)objs.add(JMPCCellObject.create());
+        
+        this.table.addNewRow();
+        
+    }
+    public void btnRefreshClick(){
+        JMPCDBButtonGroup.this.table.refresh();
+    }
+    public void btnViewClick(){
+        JMPCDBButtonGroup.this.table.viewRow();
+    }
+    
+    
+    
     public void stateInit(){
         boolean on=false;//NEGATE
+        //if(this.table.isAddingRow())on=true;
+        //else if(this.table.isEditingRow())on=true;
         this.btnAdd.setLocked(on);
         this.btnDelete.setLocked(on);
         this.btnEdit.setLocked(on);
@@ -256,13 +290,28 @@ public class JMPCDBButtonGroup implements JMFormInterface{
             this.btnNext.setLocked(true);
             this.btnLast.setLocked(true);
             this.btnFirst.setLocked(true);
+            this.btnView.setLocked(true);
+            this.btnPrint.setLocked(true);
+            this.btnEdit.setLocked(true);
+            this.btnDelete.setLocked(true);
         }else{
-            boolean f=!this.table.isFirstRecord();//NEGATE
-            boolean l=!this.table.isLastRecord();//NEGATE
-            this.btnPrev.setLocked(!f);
-            this.btnNext.setLocked(!l);
-            this.btnLast.setLocked(!l);
-            this.btnFirst.setLocked(!f);
+            if(this.table.getCurrentRow()==null){
+                this.btnPrev.setLocked(true);
+                this.btnNext.setLocked(true);
+                this.btnLast.setLocked(true);
+                this.btnFirst.setLocked(true);
+                this.btnView.setLocked(true);
+                this.btnPrint.setLocked(true);
+                this.btnEdit.setLocked(true);
+                this.btnDelete.setLocked(true);
+            }else{
+                boolean f=!this.table.isFirstRecord();//NEGATE
+                boolean l=!this.table.isLastRecord();//NEGATE
+                this.btnPrev.setLocked(!f);
+                this.btnNext.setLocked(!l);
+                this.btnLast.setLocked(!l);
+                this.btnFirst.setLocked(!f);
+            }
         }
     }
     public void stateView(){
@@ -347,68 +396,72 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         this.btnLast = btnLast;
     }
 
+    
+    
     @Override
-    public void actionAdd(JMRow rowAdded) {
+    public void actionAfterAdded(JMRow rowAdded) {
+        JMFunctions.trace("ADDED RESPONSE FROM BUTTONS");
+        this.table.gotoRow(rowAdded, true);
         this.stateAdd();
     }
 
     @Override
-    public void actionDelete(JMRow rowDeleted) {
+    public void actionAfterDeleted(JMRow rowDeleted, boolean deleted) {
         this.stateDelete();
     }
 
     @Override
-    public void actionSave(String updateQuery) {
-        this.stateSave();
+    public void actionAfterSaved(String updateQuery,boolean saved) {
+        if(saved)this.stateSave();
     }
 
     @Override
-    public void actionEdit(JMRow rowEdited) {
+    public void actionAfterEdited(JMRow rowEdited) {
         this.stateEdit();
     }
 
     @Override
-    public void actionPrint(JMRow rowPrinted) {
+    public void actionAfterPrinted(JMRow rowPrinted) {
         this.statePrint();
     }
 
     @Override
-    public void actionRefresh(JMRow rowRefreshed) {
+    public void actionAfterRefreshed(JMRow rowRefreshed) {
         this.stateRefresh();
     }
 
     @Override
-    public void actionView(JMRow rowViewed) {
+    public void actionAfterViewed(JMRow rowViewed) {
         this.stateView();
     }
 
     @Override
-    public void actionNext(JMRow nextRow) {
+    public void actionAfterMovedNext(JMRow nextRow) {
         this.stateNav();
     }
 
     @Override
-    public void actionPrev(JMRow prevRow) {
+    public void actionAfterMovedPrev(JMRow prevRow) {
         this.stateNav();
     }
 
     @Override
-    public void actionFirst(JMRow firstRow) {
+    public void actionAfterMovedFirst(JMRow firstRow) {
         this.stateNav();
     }
 
     @Override
-    public void actionLast(JMRow lastRow) {
+    public void actionAfterMovedLast(JMRow lastRow) {
         this.stateNav();
     }
 
     @Override
-    public void gotoRecord(JMRow currentRow) {
+    public void actionAfterMovedtoRecord(JMRow currentRow) {
         this.stateNav();
     }
 
     @Override
-    public void actionCancel(JMRow rowCanceled, boolean canceled) {
+    public void actionAfterCanceled(JMRow rowCanceled, boolean canceled) {
         if(canceled)this.stateInit();
     }
     

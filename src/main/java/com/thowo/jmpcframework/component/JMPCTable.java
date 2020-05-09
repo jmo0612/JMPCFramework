@@ -25,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -42,29 +43,46 @@ public class JMPCTable extends JTable implements JMFormInterface{
     public JMPCTable(JMTable table){
         this.setProp(table);
         if(table!=null){
-            if(table.isEmpty())return;
+            //if(table.isEmpty())return;
             //model.setColumnCount(0);
             List<String> lbls=table.getLabelTitles();
             for(String lbl:lbls)model.addColumn(lbl);
-            table.firstRow(false);
-            do{
-                model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
-                //JMFunctions.trace(this.table.getCurrentRow().getRowNum()+"");
-            }while(table.nextRow(false)!=null);
             
-            this.setDefaultEditor(Object.class, null);
-            
-            for(int i=0;i<table.getCurrentRow().getCells().size();i++){
-                this.getColumnModel().getColumn(i).setCellRenderer(new JMPCCellRenderer());
-                //if(!table.getCurrentRow().getCells().get(i).getVisible())this.removeColumn(this.getColumnModel().getColumn(i));
-                //if(table.getCurrentRow().getCells().get(i).getDataContainer().getDataDisplay()==JMDataContainer.DATA_IMAGE)this.getColumnModel().getColumn(i).setCellRenderer(new JMPCCellRenderer());
-                
+            List<TableColumn> hiddens=new ArrayList();
+            for(int i=0;i<table.getStyle().getFieldNames().size();i++){
+                if(!table.getStyle().getVisible(i))hiddens.add(this.getColumnModel().getColumn(i));
             }
-            this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            this.setRowSelectionAllowed(true);
-            this.setRowSelectionInterval(0, 0);
+            for(TableColumn c:hiddens){
+                this.removeColumn(c);
+            }
+            
+            if(!table.isEmpty()){
+                table.firstRow(false);
+                do{
+                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                    //JMFunctions.trace(this.table.getCurrentRow().getRowNum()+"");
+                }while(table.nextRow(false)!=null);
+            }
+            
+            
+            this.refreshLayout();
+            if(!table.isEmpty())this.setRowSelectionInterval(0, 0);
         }
         this.addListener();
+    }
+    private void refreshLayout(){
+        this.setDefaultEditor(Object.class, null);
+        int w=0;
+        for(int i=0;i<table.getStyle().getFieldNames().size();i++){
+            if(table.getStyle().getVisible(i)){
+                this.getColumnModel().getColumn(w++).setCellRenderer(new JMPCCellRenderer());
+            }
+            //this.getColumnModel().getColumn(i).setCellRenderer(new JMPCCellRenderer());
+            //if(table.getCurrentRow().getCells().get(i).getDataContainer().getDataDisplay()==JMDataContainer.DATA_IMAGE)this.getColumnModel().getColumn(i).setCellRenderer(new JMPCCellRenderer());
+            
+        }
+        this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.setRowSelectionAllowed(true);
     }
     private void setProp(JMTable table){
         this.table=table;
@@ -139,77 +157,116 @@ public class JMPCTable extends JTable implements JMFormInterface{
         return ret;
     }
 
+    
+
     @Override
-    public void actionAdd(JMRow rowAdded) {
+    public void actionAfterAdded(JMRow rowAdded) {
         model.addRow(this.getRowData(rowAdded.getDataContainers(),true));
         this.currentRow=rowAdded;
     }
 
     @Override
-    public void actionDelete(JMRow rowDeleted) {
-        JMFunctions.trace("Table delete row: "+rowDeleted.getRowNum());
-        model.removeRow(rowDeleted.getRowNum());
-        this.currentRow=table.getCurrentRow();
+    public void actionAfterDeleted(JMRow rowDeleted, boolean deleted) {
+        if(deleted){
+            JMFunctions.trace("Table delete row: "+rowDeleted.getRowNum());
+            model.removeRow(rowDeleted.getRowNum());
+            this.currentRow=table.getCurrentRow();
+        }
     }
 
     @Override
-    public void actionSave(String updateQuery) {
+    public void actionAfterSaved(String updateQuery,boolean saved) {
+        //JMFunctions.traceAndShow(updateQuery);
+    }
+
+    @Override
+    public void actionAfterEdited(JMRow rowEdited) {
         
     }
 
     @Override
-    public void actionEdit(JMRow rowEdited) {
+    public void actionAfterPrinted(JMRow rowPrinted) {
         
     }
 
     @Override
-    public void actionPrint(JMRow rowPrinted) {
+    public void actionAfterRefreshed(JMRow rowRefreshed) {
+        /*JMFunctions.trace("REFRESHED");
+        if(this.getColumnCount()==0){
+            List<String> lbls=table.getLabelTitles();
+            for(String lbl:lbls)model.addColumn(lbl);
+            this.refreshLayout();
+        }*/
+    }
+
+    @Override
+    public void actionAfterViewed(JMRow rowViewed) {
         
     }
 
     @Override
-    public void actionRefresh(JMRow rowRefreshed) {
-        model.fireTableDataChanged();
-    }
-
-    @Override
-    public void actionView(JMRow rowViewed) {
-        
-    }
-
-    @Override
-    public void actionNext(JMRow nextRow) {
-        this.setRowSelectionInterval(nextRow.getRowNum(), nextRow.getRowNum());
+    public void actionAfterMovedNext(JMRow nextRow) {
         this.currentRow=nextRow;
+        if(nextRow!=null){
+            if(nextRow.getRowNum()>=this.getRowCount()){
+                JMFunctions.trace("ADDED FROM NEXT"+" : "+nextRow.getRowNum());
+                model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+            }
+            this.setRowSelectionInterval(nextRow.getRowNum(), nextRow.getRowNum());
+        }
     }
 
     @Override
-    public void actionPrev(JMRow prevRow) {
-        this.setRowSelectionInterval(prevRow.getRowNum(), prevRow.getRowNum());
+    public void actionAfterMovedPrev(JMRow prevRow) {
         this.currentRow=prevRow;
+        if(prevRow!=null){
+            if(prevRow.getRowNum()>=this.getRowCount()){
+                JMFunctions.trace("ADDED FROM PREV"+" : "+prevRow.getRowNum());
+                model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+            }
+            this.setRowSelectionInterval(prevRow.getRowNum(), prevRow.getRowNum());
+        }
     }
 
     @Override
-    public void actionFirst(JMRow firstRow) {
-        this.setRowSelectionInterval(firstRow.getRowNum(), firstRow.getRowNum());
+    public void actionAfterMovedFirst(JMRow firstRow) {
         this.currentRow=firstRow;
+        if(firstRow!=null){
+            if(firstRow.getRowNum()>=this.getRowCount()){
+                JMFunctions.trace("ADDED FROM FIRST"+" : "+firstRow.getRowNum());
+                model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+            }
+            this.setRowSelectionInterval(firstRow.getRowNum(), firstRow.getRowNum());
+        }
     }
 
     @Override
-    public void actionLast(JMRow lastRow) {
-        this.setRowSelectionInterval(lastRow.getRowNum(), lastRow.getRowNum());
+    public void actionAfterMovedLast(JMRow lastRow) {
         this.currentRow=lastRow;
+        if(lastRow!=null){
+            if(lastRow.getRowNum()>=this.getRowCount()){
+                JMFunctions.trace("ADDED FROM LAST"+" : "+lastRow.getRowNum());
+                model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+            }
+            this.setRowSelectionInterval(lastRow.getRowNum(), lastRow.getRowNum());
+        }
     }
 
     @Override
-    public void gotoRecord(JMRow currentRow) {
-        this.setRowSelectionInterval(currentRow.getRowNum(), currentRow.getRowNum());
+    public void actionAfterMovedtoRecord(JMRow currentRow) {
         this.currentRow=currentRow;
+        if(currentRow!=null){
+            if(currentRow.getRowNum()>=this.getRowCount()){
+                JMFunctions.trace("ADDED FROM GOTO"+" : "+currentRow.getRowNum());
+                model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+            }
+            this.setRowSelectionInterval(currentRow.getRowNum(), currentRow.getRowNum());
+        }
     }
 
     @Override
-    public void actionCancel(JMRow rowCanceled, boolean canceled) {
-        if(canceled)this.currentRow=rowCanceled;
+    public void actionAfterCanceled(JMRow rowCanceled, boolean canceled) {
+        //if(canceled)this.currentRow=rowCanceled;
     }
 
     

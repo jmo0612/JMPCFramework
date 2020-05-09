@@ -191,14 +191,18 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
     public boolean onEditMode(){
         return this.editMode;
     }
-    public void setEditMode(boolean editMode, JMRow currentRow){
-        if(!editMode){
-            new JTextField().grabFocus();
+    public void setEditMode(boolean editMode, JMRow currentRow, int column){
+        if(currentRow!=null){
+            int col=column;
+            //this.dc=currentRow.getDataContainers().get(col);
+            this.dc=currentRow.getCells().get(col).getDataContainer();
+            if(!this.dc.isInterfaceRegistered(this))this.dc.addInterface(this, true);
+        }else{
+            this.text.setText("");
         }
-        int col=dc.getColIndex();
-        this.dc=currentRow.getCells().get(col).getDataContainer();
         this.editMode=editMode;
         this.text.setEditable(this.editable && editMode);
+        
     }
     public boolean editable(){
         return this.editable;
@@ -244,6 +248,7 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
                     }
                 };
                 SwingUtilities.invokeLater(doUpdate);*/
+                //JMPCInputStringTFWeblaf.this.editingText=true;
                 if(JMPCInputStringTFWeblaf.this.editingText){
                     if(JMPCInputStringTFWeblaf.this.editMode){
                         JMPCInputStringTFWeblaf.this.hideError();

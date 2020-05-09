@@ -14,6 +14,8 @@ import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,7 +40,7 @@ public class JMPCButton extends JPanel {
     private JPanel bgDisabled;
     private JPanel bgClicked;
     private JMVec2 size;
-    private MouseListener listener;
+    private List<MouseListener> listeners;
     private MouseListener uiListener;
     private boolean locked;
     private Color fontColor=Color.WHITE;
@@ -114,6 +116,7 @@ public class JMPCButton extends JPanel {
         this.size=btnSize;
         if(!text.equals(""))this.text.setText(text);
         this.view();
+        this.setFocusable(true);
     }
     
     private void refreshContent(){
@@ -186,10 +189,11 @@ public class JMPCButton extends JPanel {
         if(this.locked!=locked){
             this.locked=locked;
             this.removeMouseListener(this.uiListener);
-            this.removeMouseListener(this.listener);
+            for(MouseListener l:this.listeners)this.removeMouseListener(l);
+            
             if(!locked){
                 this.addMouseListener(this.uiListener);
-                this.addMouseListener(this.listener);
+                for(MouseListener l:this.listeners)this.addMouseListener(l);
             }
             this.bg.setVisible(true);
             this.bgHover.setVisible(!locked);
@@ -206,8 +210,13 @@ public class JMPCButton extends JPanel {
     
     public void setAction(Runnable action){
         if(action==null)return;
-        if(this.listener!=null)this.removeMouseListener(this.listener);
-        this.listener=new MouseListener(){
+        if(this.listeners!=null){
+            for(MouseListener l:this.listeners){
+                this.removeMouseListener(l);
+            }
+        }else this.listeners=new ArrayList();
+        
+        MouseListener newL=new MouseListener(){
             @Override
             public void mouseClicked(MouseEvent e) {
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -234,14 +243,53 @@ public class JMPCButton extends JPanel {
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         };
-        if(!this.locked)this.addMouseListener(this.listener);
+        this.listeners.clear();
+        this.listeners.add(newL);
+        if(!this.locked)this.addMouseListener(this.listeners.get(0));
+    }
+    
+    public void addAction(Runnable action){
+        if(action==null)return;
+        if(this.listeners==null){
+            this.listeners=new ArrayList();
+        }
+        
+        MouseListener newL=new MouseListener(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                action.run();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        };
+        this.listeners.add(newL);
+        if(!this.locked)this.addMouseListener(newL);
     }
     
     private void addListener(){
         this.uiListener=new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                JMPCButton.this.grabFocus();
             }
 
             @Override
