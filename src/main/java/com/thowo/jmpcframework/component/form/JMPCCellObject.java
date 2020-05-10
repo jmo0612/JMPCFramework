@@ -51,6 +51,10 @@ public class JMPCCellObject extends JLabel implements JMInputInterface{
         this.text=dc.getText();
         this.dataDisplay=dc.getDataDisplay();
     }
+    
+    public String getValueString(){
+        return this.valueString;
+    }
 
     private void alignText(int align){
         if(align==JMDataContainer.ALIGN_LEFT)this.setHorizontalAlignment(SwingConstants.LEFT);

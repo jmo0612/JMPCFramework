@@ -54,6 +54,7 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
     private boolean editMode;
     private boolean editable;
     private boolean editingText=false;
+    private KeyListener onType;
     
     public static JMPCInputStringTFWeblaf create(String label,String prompt, int maxChar, int maxWidth, boolean horizontal){
         return new JMPCInputStringTFWeblaf("","","",label,prompt,maxChar,maxWidth,horizontal);
@@ -212,7 +213,31 @@ public class JMPCInputStringTFWeblaf extends JPanel implements JMInputInterface{
         return this;
     }
     public void setText(String text){
+        JMFunctions.trace(text);
         this.text.setText(text);
+    }
+    public String getText(){
+        return this.text.getText();
+    }
+    public void setAction(Runnable action){
+        if(this.onType!=null)this.text.removeKeyListener(onType);
+        this.onType=new KeyListener(){
+            @Override
+            public void keyTyped(KeyEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                action.run();
+            }
+        };
+        this.text.addKeyListener(this.onType);
     }
     
     private void addListeners(){

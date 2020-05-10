@@ -51,6 +51,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     private JMPCButton btnCancel;
     private int defWidth=50;
     private int defHeight=10;
+    private List<Boolean> befFilter=new ArrayList();
     
     
     public static JMPCDBButtonGroup create(JMTable table, String formTitle,boolean editing,boolean adding){
@@ -216,8 +217,38 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         JMPCDBButtonGroup.this.table.viewRow();
     }
     
-    
-    
+    private void backUpState(){
+        this.befFilter.clear();
+        this.befFilter.add(this.btnAdd.isLocked());
+        this.befFilter.add(this.btnSave.isLocked());
+        this.befFilter.add(this.btnRefresh.isLocked());
+        this.befFilter.add(this.btnCancel.isLocked());
+        this.befFilter.add(this.btnPrev.isLocked());
+        this.befFilter.add(this.btnNext.isLocked());
+        this.befFilter.add(this.btnLast.isLocked());
+        this.befFilter.add(this.btnFirst.isLocked());
+        this.befFilter.add(this.btnView.isLocked());
+        this.befFilter.add(this.btnPrint.isLocked());
+        this.befFilter.add(this.btnEdit.isLocked());
+        this.befFilter.add(this.btnDelete.isLocked());
+    }
+    private void stateFilter(){
+        if(this.befFilter.isEmpty())this.backUpState();
+        String filter=this.table.getFilter();
+        this.btnAdd.setLocked(this.befFilter.get(0)||!filter.equals(""));
+        //this.btnSave.setLocked(this.befFilter.get(1));
+        //this.btnRefresh.setLocked(this.befFilter.get(2));
+        //this.btnCancel.setLocked(this.befFilter.get(3));
+        this.btnPrev.setLocked(this.befFilter.get(4)||!filter.equals(""));
+        this.btnNext.setLocked(this.befFilter.get(5)||!filter.equals(""));
+        this.btnLast.setLocked(this.befFilter.get(6)||!filter.equals(""));
+        this.btnFirst.setLocked(this.befFilter.get(7)||!filter.equals(""));
+        //this.btnView.setLocked(this.befFilter.get(8));
+        //this.btnPrint.setLocked(this.befFilter.get(9));
+        //this.btnEdit.setLocked(this.befFilter.get(10));
+        //this.btnDelete.setLocked(this.befFilter.get(11));
+        if(filter.equals(""))this.befFilter.clear();
+    }
     public void stateInit(){
         boolean on=false;//NEGATE
         //if(this.table.isAddingRow())on=true;
@@ -246,7 +277,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         this.btnNext.setLocked(true);
         this.btnLast.setLocked(true);
         this.btnFirst.setLocked(true);
-        //this.stateNav();
+        this.stateFilter();
     }
     public void stateDelete(){
         this.stateInit();
@@ -265,7 +296,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         this.btnNext.setLocked(true);
         this.btnLast.setLocked(true);
         this.btnFirst.setLocked(true);
-        //this.stateNav();
+        this.stateFilter();
     }
     private void statePrint(){
         /*boolean on=false;//NEGATE
@@ -313,6 +344,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
                 this.btnFirst.setLocked(!f);
             }
         }
+        this.stateFilter();
     }
     public void stateView(){
         this.stateInit();
@@ -463,6 +495,21 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     @Override
     public void actionAfterCanceled(JMRow rowCanceled, boolean canceled) {
         if(canceled)this.stateInit();
+    }
+
+    @Override
+    public void actionBeforeRefresh(JMRow rowRefreshed) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void actionAfterFiltered(String filter) {
+        this.stateFilter();
+    }
+
+    @Override
+    public void actionBeforeFilter(String filter) {
+        this.backUpState();
     }
     
 }
