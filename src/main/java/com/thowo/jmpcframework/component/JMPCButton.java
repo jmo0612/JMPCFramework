@@ -40,7 +40,7 @@ public class JMPCButton extends JPanel {
     private JPanel bgDisabled;
     private JPanel bgClicked;
     private JMVec2 size;
-    private List<MouseListener> listeners;
+    private List<MouseListener> listeners=new ArrayList();
     private MouseListener uiListener;
     private boolean locked;
     private Color fontColor=Color.WHITE;
@@ -186,7 +186,7 @@ public class JMPCButton extends JPanel {
     }
     
     public void setLocked(boolean locked){
-        if(this.locked!=locked){
+        //if(this.locked!=locked){
             this.locked=locked;
             this.removeMouseListener(this.uiListener);
             for(MouseListener l:this.listeners)this.removeMouseListener(l);
@@ -202,7 +202,7 @@ public class JMPCButton extends JPanel {
 
             this.setEnabled(!locked);
             //this.refreshContent();
-        }
+        //}
     }
     public boolean isLocked(){
         return this.locked;
