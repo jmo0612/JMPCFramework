@@ -86,7 +86,7 @@ public class JMPCForm extends JFrame {
         p.add(this.min);
         p.add(this.full);
         p.add(this.close);
-        bg.add(p);
+        //bg.add(p);
         bg.add(this.loadingSprite);
         bg.add(content);
         content.setOpacity(1.0f);

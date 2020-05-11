@@ -24,6 +24,8 @@ import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
@@ -193,6 +195,32 @@ public class JMPCFunctions{
         
         JPanel ret=new JPanel();
         ret.add(t);
+        return ret;
+    }
+    public static String encrypt(String text){
+        String ret="";
+        try {
+            // Create MessageDigest instance for MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            //Add password bytes to digest
+            md.update(text.getBytes());
+            //Get the hash's bytes 
+            byte[] bytes = md.digest();
+            //This bytes[] has bytes in decimal format;
+            //Convert it to hexadecimal format
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length ;i++)
+            {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            //Get complete hashed password in hex format
+            ret = sb.toString();
+        } 
+        catch (NoSuchAlgorithmException e) 
+        {
+            e.printStackTrace();
+        }
+        JMFunctions.trace("PASSWORD : "+ret);
         return ret;
     }
 }

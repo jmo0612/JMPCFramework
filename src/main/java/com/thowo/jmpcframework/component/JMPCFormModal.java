@@ -56,7 +56,7 @@ public class JMPCFormModal extends JDialog{
         //p.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         p.setOpaque(false);
         p.add(this.close);
-        bg.add(p);
+        //sbg.add(p);
         bg.add(this.loadingSprite);
         bg.add(content);
         content.setOpacity(1.0f);
