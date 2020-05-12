@@ -92,29 +92,6 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
         if(!this.paths.isEmpty())this.select(0);
         if(this.addAction!=null)this.btnAdd.setAction(this.addAction);
     }
-    private void fillFromPaths(){
-        int lWidth=this.width/5;
-        for(String path:this.paths){
-            Image tmpImg=JMPCFunctions.getImageFromPath(path);
-            this.images.add(tmpImg);
-            
-            JMVec2 imgSize=new JMVec2(tmpImg.getWidth(null),tmpImg.getHeight(null));
-            JMVec2 size=new JMVec2(lWidth,lWidth);
-            List<JMVec2> scaled=JMFunctions.scaledSize(imgSize, size, JMFunctions.SCALE_FIT);
-            ImageIcon ico=new ImageIcon(tmpImg.getScaledInstance(scaled.get(0).getIntX(), scaled.get(0).getIntY(), Image.SCALE_SMOOTH));
-            JLabel lblImg=new JLabel(ico);
-            lblImg.setBounds(scaled.get(1).getIntX(), scaled.get(1).getIntY(), scaled.get(0).getIntX(), scaled.get(0).getIntY());
-            this.lblImgs.add(lblImg);
-            JPanel pnlImg=new JPanel();
-            pnlImg.add(lblImg);
-            this.pnlImgs.add(pnlImg);
-            this.pnlList.add(pnlImg);
-            
-        }
-        this.addThumbsListener();
-        this.addViewListener();
-    }
-    
     private void setProp(List<String> paths, int width, int height){
         this.paths=paths;
         this.width=width;
@@ -167,6 +144,74 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
         this.doLayout();
         
     }
+    private void fillFromPaths(){
+        int lWidth=this.width/5;
+        for(String path:this.paths){
+            this.setImage(path);
+            /*Image tmpImg=JMPCFunctions.getImageFromPath(path);
+            this.images.add(tmpImg);
+            
+            JMVec2 imgSize=new JMVec2(tmpImg.getWidth(null),tmpImg.getHeight(null));
+            JMVec2 size=new JMVec2(lWidth,lWidth);
+            List<JMVec2> scaled=JMFunctions.scaledSize(imgSize, size, JMFunctions.SCALE_FIT);
+            ImageIcon ico=new ImageIcon(tmpImg.getScaledInstance(scaled.get(0).getIntX(), scaled.get(0).getIntY(), Image.SCALE_SMOOTH));
+            JLabel lblImg=new JLabel(ico);
+            lblImg.setBounds(scaled.get(1).getIntX(), scaled.get(1).getIntY(), scaled.get(0).getIntX(), scaled.get(0).getIntY());
+            this.lblImgs.add(lblImg);
+            JPanel pnlImg=new JPanel();
+            pnlImg.add(lblImg);
+            this.pnlImgs.add(pnlImg);
+            this.pnlList.add(pnlImg);
+            */
+        }
+        //this.setThumbsListener();
+        this.setViewListener();
+    }
+    public void addImage(String path){
+        if(!JMFunctions.fileExist(new File(path)))return;
+        if(this.paths==null)this.paths=new ArrayList();
+        this.paths.add(path);
+        this.setImage(path);
+    }
+    private void setImage(String path){
+        if(!JMFunctions.fileExist(new File(path)))return;
+        int lWidth=this.width/5;
+        Image tmpImg=JMPCFunctions.getImageFromPath(path);
+        this.images.add(tmpImg);
+
+        JMVec2 imgSize=new JMVec2(tmpImg.getWidth(null),tmpImg.getHeight(null));
+        JMVec2 size=new JMVec2(lWidth,lWidth);
+        List<JMVec2> scaled=JMFunctions.scaledSize(imgSize, size, JMFunctions.SCALE_FIT);
+        ImageIcon ico=new ImageIcon(tmpImg.getScaledInstance(scaled.get(0).getIntX(), scaled.get(0).getIntY(), Image.SCALE_SMOOTH));
+        JLabel lblImg=new JLabel(ico);
+        lblImg.setBounds(scaled.get(1).getIntX(), scaled.get(1).getIntY(), scaled.get(0).getIntX(), scaled.get(0).getIntY());
+        this.lblImgs.add(lblImg);
+        JPanel pnlImg=new JPanel();
+        pnlImg.add(lblImg);
+        this.pnlImgs.add(pnlImg);
+        this.pnlList.add(pnlImg);
+        this.select(this.pnlImgs.size()-1);
+        this.setThumbsListener();
+        
+        
+        
+        
+        
+        //boolean locked=this.btnAdd.isLocked();
+        //this.removeAll();
+        //path="/home/jimi/Desktop/tes deploy/samples/admin_settings.jpeg";
+        //if(this.paths==null)this.paths=new ArrayList();
+        //if(JMFunctions.fileExist(new File(path)))this.paths.add(path);
+        //this.setProp(this.paths,this.width,this.height);
+        //this.fillFromPaths();
+        //if(!this.paths.isEmpty())this.select(this.paths.size()-1);
+        //if(this.addAction!=null)this.btnAdd.setAction(this.addAction);
+        //this.btnAdd.setLocked(!this.editMode);
+        
+    }
+    
+    
+    
     private void view(int index){
         this.imgView=this.images.get(index);
         JMVec2 imgSize=new JMVec2(this.images.get(index).getWidth(null),this.images.get(index).getHeight(null));
@@ -236,10 +281,12 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
         return false;
     }
     
-    private void addThumbsListener(){
+    private void setThumbsListener(){
         for(int i=0;i<this.pnlImgs.size();i++){
             JPanel p=this.pnlImgs.get(i);
             final int ind=i;
+            
+            if(p.getMouseListeners().length>0)p.removeMouseListener(p.getMouseListeners()[0]);
             p.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -326,7 +373,7 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
             });
         }
     }
-    private void addViewListener(){
+    private void setViewListener(){
         this.pnlView.addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
@@ -452,30 +499,17 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
             if(i==0)this.select(this.selected.get(i));
             else this.addSelection(this.selected.get(i));
         }
-        this.addThumbsListener();
+        this.setThumbsListener();
     }
     public void clearPaths(){
         if(this.paths==null)this.paths=new ArrayList();
         else this.paths.clear();
-        this.setProp(this.paths,this.width,this.height);
-        this.fillFromPaths();
-        if(this.addAction!=null)this.btnAdd.setAction(this.addAction);
-    }
-    public void addImage(String path){
-        //boolean locked=this.btnAdd.isLocked();
-        
         this.removeAll();
-        //path="/home/jimi/Desktop/tes deploy/samples/admin_settings.jpeg";
-        if(this.paths==null)this.paths=new ArrayList();
-        this.paths.add(path);
         this.setProp(this.paths,this.width,this.height);
         this.fillFromPaths();
-        this.select(0);
         if(this.addAction!=null)this.btnAdd.setAction(this.addAction);
-        //this.btnAdd.setLocked(locked);
-        //this.btnAdd.setLocked(true);
-        
     }
+    
     public void setEdited(boolean edited){
         this.edited=edited;
     }
@@ -499,11 +533,9 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
         }else{
             this.setKeyValue("");
         }
-        JMFunctions.trace("222222222222222222222222222222222222222222222222222222222222222222222222"+this.editable+editMode);
         this.editMode=editMode;
         this.canEdit=(this.editable && editMode);
         this.btnAdd.setLocked((!(this.editable && editMode)));
-        JMFunctions.trace("222222222222222222222222222222222222222222222222222222222222222222222222"+this.btnAdd.isLocked());
     }
     public JMPCImagesViewerDB setEditable(boolean editable){
         this.editable=editable;
@@ -520,7 +552,7 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
 
     @Override
     public void displayText(String text, int JMDataContainerConstantAlign) {
-        this.editMode=false;
+        //this.editMode=false;
     }
 
     @Override
