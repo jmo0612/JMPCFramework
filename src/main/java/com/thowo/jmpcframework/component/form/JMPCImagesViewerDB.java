@@ -162,6 +162,8 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
         this.add(pnlThumbs,BorderLayout.NORTH);
         this.add(pnlMain,BorderLayout.CENTER);
         this.add(pnlAdd,BorderLayout.SOUTH);
+        //this.getParent().doLayout();
+        this.doLayout();
         
     }
     private void view(int index){
@@ -508,6 +510,9 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
     public void setAddAction(Runnable addAction){
         this.addAction=addAction;
         this.btnAdd.setAction(this.addAction);
+    }
+    public List<String> getPaths(){
+        return this.paths;
     }
     
 
