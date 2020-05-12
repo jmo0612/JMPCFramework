@@ -25,6 +25,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -462,6 +463,7 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
     }
     public void addImage(String path){
         //boolean locked=this.btnAdd.isLocked();
+        
         this.removeAll();
         //path="/home/jimi/Desktop/tes deploy/samples/admin_settings.jpeg";
         if(this.paths==null)this.paths=new ArrayList();
