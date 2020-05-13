@@ -432,7 +432,6 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     
     @Override
     public void actionAfterAdded(JMRow rowAdded) {
-        JMFunctions.trace("ADDED RESPONSE FROM BUTTONS");
         this.table.gotoRow(rowAdded, true);
         this.stateAdd();
     }

@@ -112,7 +112,6 @@ public class JMPCTable extends JTable implements JMFormInterface{
                     if(JMPCTable.this.table.getFilter().equals("")){
                         JMPCTable.this.table.nextRow(true);
                     }else{
-                        JMFunctions.trace("XXXXXXXXXXXXXXXXX    : "+JMPCTable.this.getSelectedRow());
                         List<Integer> keys=JMPCTable.this.table.getKeyColumns();
                         List<String> vals=new ArrayList();
                         for(Integer key:keys){
@@ -126,7 +125,6 @@ public class JMPCTable extends JTable implements JMFormInterface{
                     if(JMPCTable.this.table.getFilter().equals("")){
                         JMPCTable.this.table.prevRow(true);
                     }else{
-                        JMFunctions.trace("XXXXXXXXXXXXXXXXX    : "+JMPCTable.this.getSelectedRow());
                         List<Integer> keys=JMPCTable.this.table.getKeyColumns();
                         List<String> vals=new ArrayList();
                         for(Integer key:keys){
@@ -249,7 +247,6 @@ public class JMPCTable extends JTable implements JMFormInterface{
         this.currentRow=nextRow;
         if(nextRow!=null){
             if(nextRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
-                JMFunctions.trace("ADDED FROM NEXT"+" : "+nextRow.getRowNum());
                 model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
             }
             if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(nextRow.getRowNum(), nextRow.getRowNum());
@@ -261,7 +258,6 @@ public class JMPCTable extends JTable implements JMFormInterface{
         this.currentRow=prevRow;
         if(prevRow!=null){
             if(prevRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
-                JMFunctions.trace("ADDED FROM PREV"+" : "+prevRow.getRowNum());
                 model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
             }
             if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(prevRow.getRowNum(), prevRow.getRowNum());
@@ -273,7 +269,6 @@ public class JMPCTable extends JTable implements JMFormInterface{
         this.currentRow=firstRow;
         if(firstRow!=null){
             if(firstRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
-                JMFunctions.trace("ADDED FROM FIRST"+" : "+firstRow.getRowNum());
                 model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
             }
             if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(firstRow.getRowNum(), firstRow.getRowNum());
@@ -285,7 +280,6 @@ public class JMPCTable extends JTable implements JMFormInterface{
         this.currentRow=lastRow;
         if(lastRow!=null){
             if(lastRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
-                JMFunctions.trace("ADDED FROM LAST"+" : "+lastRow.getRowNum());
                 model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
             }
             if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(lastRow.getRowNum(), lastRow.getRowNum());
@@ -297,7 +291,6 @@ public class JMPCTable extends JTable implements JMFormInterface{
         this.currentRow=currentRow;
         if(currentRow!=null){
             if(currentRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
-                JMFunctions.trace("ADDED FROM GOTO"+" : "+currentRow.getRowNum());
                 model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
             }
             if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(currentRow.getRowNum(), currentRow.getRowNum());
