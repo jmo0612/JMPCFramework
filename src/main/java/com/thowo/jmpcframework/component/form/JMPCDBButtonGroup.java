@@ -147,7 +147,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         this.btnPrint.setAction(new Runnable(){
             @Override
             public void run() {
-                
+                JMPCDBButtonGroup.this.table.print();
             }
         });
         this.btnNext.setAction(new Runnable(){
