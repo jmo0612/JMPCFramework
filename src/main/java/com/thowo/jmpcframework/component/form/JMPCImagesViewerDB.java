@@ -105,7 +105,7 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
         this.pnlList=new JPanel();
         this.pnlView=new JPanel();
         this.lblView=new JLabel();
-        this.btnAdd=JMPCButtonSimple.create("Scan","img/buttons/db/scan.png", JMVec2.create(50, 50)).setFontColor(Color.decode("#234e79")).increaseFontSize(-10);
+        this.btnAdd=JMPCButtonSimple.create("","img/buttons/db/scan.png", JMVec2.create(40, 40)).setFontColor(Color.decode("#234e79")).decreaseFontSize(3);
         this.btnAdd.setLocked((!(this.editable && this.editMode)));
         this.setContainer();
     }
