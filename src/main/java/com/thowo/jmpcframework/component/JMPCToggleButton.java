@@ -10,6 +10,7 @@ import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmpcframework.JMPCFunctions;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -28,17 +30,14 @@ import javax.swing.SwingConstants;
  *
  * @author jimi
  */
-public class JMPCButton extends JPanel {
+public class JMPCToggleButton extends JPanel {
     private JPanel content=new JPanel();
     private JLabel text=new JLabel();
-    private JPanel iconLeft;
-    private JPanel iconRight;
-    private JPanel iconTop;
-    private JPanel iconBottom;
-    private JPanel bg;
-    private JPanel bgHover;
-    private JPanel bgDisabled;
-    private JPanel bgClicked;
+    private JPanel normal;
+    private JPanel select;
+    private JPanel hover;
+    private JPanel disabled;
+    private JPanel clicked;
     private JMVec2 size;
     private List<MouseListener> listeners=new ArrayList();
     private MouseListener uiListener;
@@ -46,85 +45,59 @@ public class JMPCButton extends JPanel {
     private Color fontColor=Color.WHITE;
     private int fontSize=0;
     private String fontFamily="Dialog";
+    private boolean selected=false;
     
     
-    public static JMPCButton create(String text){
-        return new JMPCButton(text);
+    public static JMPCToggleButton create(String text, String resId){
+        return new JMPCToggleButton(text, resId);
     }
-    public static JMPCButton create(String text, JMVec2 size){
-        return new JMPCButton(text,size);
+    public static JMPCToggleButton create(String text, String resId, JMVec2 size){
+        return new JMPCToggleButton(text,resId,size);
     }
     
-    public JMPCButton setFontColor(Color color){
+    public JMPCToggleButton setFontColor(Color color){
         this.fontColor=color;
         this.refreshContent();
         return this;
     }
-    public JMPCButton increaseFontSize(int inc){
+    public JMPCToggleButton increaseFontSize(int inc){
         this.fontSize+=inc;
         this.refreshContent();
         return this;
     }
-    public JMPCButton decreaseFontSize(int dec){
+    public JMPCToggleButton decreaseFontSize(int dec){
         this.fontSize-=dec;
         this.refreshContent();
         return this;
     }
-    public JMPCButton setFont(String font){
+    public JMPCToggleButton setFont(String font){
         this.fontFamily=font;
         this.refreshContent();
         return this;
     }
-    public JMPCButton addIconLeft(String resId, Class<?> CLASS){
-        this.iconLeft=JMPCFunctions.getImageOpaque(resId, CLASS, JMVec2.create(this.size.getIntY()-2, this.size.getIntY()-2));
-        this.refreshContent();
-        return this;
-    }
-    public JMPCButton addIconRight(String resId, Class<?> CLASS){
-        this.iconRight=JMPCFunctions.getImageOpaque(resId, CLASS, JMVec2.create(this.size.getIntY()-2, this.size.getIntY()-2));
-        this.refreshContent();
-        return this;
-    }
-    public JMPCButton addIconTop(String resId, Class<?> CLASS){
-        int h=this.size.getIntY();
-        if(this.iconTop==null){
-            if(this.iconBottom!=null)h=this.size.getIntY()/2;
-            this.size=JMVec2.create(this.size.getIntX(), this.size.getIntY()+h);
-        }
-        this.iconTop=JMPCFunctions.getImageOpaque(resId, CLASS, JMVec2.create(h-2, h-2));
-        this.reArrange();
-        return this;
-    }
-    public JMPCButton addIconBottom(String resId, Class<?> CLASS){
-        int h=this.size.getIntY();
-        if(this.iconBottom==null){
-            if(this.iconTop!=null)h=this.size.getIntY()/2;
-            this.size=JMVec2.create(this.size.getIntX(), this.size.getIntY()+h);
-        }
-        this.iconBottom=JMPCFunctions.getImageOpaque(resId, CLASS, JMVec2.create(h-2, h-2));
-        this.reArrange();
+    private JMPCToggleButton setText(String text){
+        this.text.setText(text);
         return this;
     }
     
-    public JMPCButton(String text){
-        this.setProp(text, null);
+    public JMPCToggleButton(String text, String resId){
+        this.setProp(text,resId, null);
     }
-    public JMPCButton(String text, JMVec2 size){
-        this.setProp(text, size);
+    public JMPCToggleButton(String text, String resId, JMVec2 size){
+        this.setProp(text,resId, size);
     }
-    private void setProp(String text, JMVec2 btnSize){
+    private void setProp(String text, String resId, JMVec2 btnSize){
         this.size=btnSize;
         if(!text.equals(""))this.text.setText(text);
-        this.view();
+        this.view(resId);
         this.setFocusable(true);
     }
     
     private void refreshContent(){
         this.content.removeAll();
-        this.content.setLayout(new BorderLayout());
+        //this.content.setLayout(new BorderLayout());
+        this.content.setLayout(new FlowLayout());
         this.content.setOpaque(false);
-        if(this.iconTop!=null)this.content.add(this.iconTop,BorderLayout.NORTH);
-        if(this.iconBottom!=null)this.content.add(this.iconBottom,BorderLayout.SOUTH);
         if(this.text!=null){
             this.text.setVerticalAlignment(SwingConstants.CENTER);
             this.text.setHorizontalAlignment(SwingConstants.CENTER);
@@ -140,28 +113,37 @@ public class JMPCButton extends JPanel {
         }
         JPanel p=new JPanel();
         p.setOpaque(false);
-        if(this.iconLeft!=null)p.add(this.iconLeft);
         p.add(this.text);
-        if(this.iconRight!=null)p.add(this.iconRight);
-        this.content.add(p,BorderLayout.CENTER);
+        Box box=Box.createVerticalBox();
+        box.add(p);
+        this.content.add(box);
+        //this.content.add(new JLabel(" "),BorderLayout.SOUTH);
+        //this.content.add(new JLabel(" "),BorderLayout.SOUTH);
         //this.setBorder(BorderFactory.createLineBorder(Color.BLUE));
     }
     
-    private void view(){
-        if(this.bg==null)this.bg=JMPCFunctions.getImageOpaque("img/buttons/default/bg.png", this.getClass(), this.size);
-        if(this.bgHover==null)this.bgHover=JMPCFunctions.getImageOpaque("img/buttons/default/bgHover.png", this.getClass(), this.size);
-        if(this.bgDisabled==null)this.bgDisabled=JMPCFunctions.getImageOpaque("img/buttons/default/bgDisabled.png", this.getClass(), this.size);
-        if(this.bgClicked==null)this.bgClicked=JMPCFunctions.getImageOpaque("img/buttons/default/bgClicked.png", this.getClass(), this.size);
+    private void view(String resId){
+        String img=JMFunctions.removeExtension(resId);
+        String ext=JMFunctions.getExtension(resId);
+        JMFunctions.trace(img+"_hover"+ext);
+        if(this.normal==null)this.normal=JMPCFunctions.getImageOpaque(resId, this.getClass(), this.size);
+        if(this.select==null)this.select=JMPCFunctions.getImageOpaque(img+"_selected"+ext, this.getClass(), this.size);
+        if(this.hover==null)this.hover=JMPCFunctions.getImageOpaque(img+"_hover"+ext, this.getClass(), this.size);
+        if(this.disabled==null)this.disabled=JMPCFunctions.getImageOpaque(img+"_disabled"+ext, this.getClass(), this.size);
+        if(this.clicked==null)this.clicked=JMPCFunctions.getImageOpaque(img+"_clicked"+ext, this.getClass(), this.size);
         if(this.text==null)this.text=new JLabel();
         
-        this.bgDisabled.setVisible(false);
-        this.bgDisabled.setOpaque(false);
+        
+        
+        this.disabled.setVisible(false);
+        this.disabled.setOpaque(false);
         this.setLayout(new OverlayLayout(this));
-        this.add(this.bgDisabled);
+        this.add(this.disabled);
         this.add(this.content);
-        this.add(this.bg);
-        this.add(this.bgHover);
-        this.add(this.bgClicked);
+        this.add(this.normal);
+        this.add(this.select);
+        this.add(this.hover);
+        this.add(this.clicked);
         this.addListener();
         this.refreshContent();
         this.setOpaque(false);
@@ -169,20 +151,20 @@ public class JMPCButton extends JPanel {
     
     private void reArrange(){
         this.removeAll();
-        if(this.bg==null)this.bg=JMPCFunctions.getImageOpaque("img/buttons/default/bg.png", this.getClass(), this.size);
-        if(this.bgHover==null)this.bgHover=JMPCFunctions.getImageOpaque("img/buttons/default/bgHover.png", this.getClass(), this.size);
-        if(this.bgDisabled==null)this.bgDisabled=JMPCFunctions.getImageOpaque("img/buttons/default/bgDisabled.png", this.getClass(), this.size);
-        if(this.bgClicked==null)this.bgClicked=JMPCFunctions.getImageOpaque("img/buttons/default/bgClicked.png", this.getClass(), this.size);
+        if(this.normal==null)this.normal=JMPCFunctions.getImageOpaque("img/buttons/default/bg.png", this.getClass(), this.size);
+        if(this.hover==null)this.hover=JMPCFunctions.getImageOpaque("img/buttons/default/bgHover.png", this.getClass(), this.size);
+        if(this.disabled==null)this.disabled=JMPCFunctions.getImageOpaque("img/buttons/default/bgDisabled.png", this.getClass(), this.size);
+        if(this.clicked==null)this.clicked=JMPCFunctions.getImageOpaque("img/buttons/default/bgClicked.png", this.getClass(), this.size);
         if(this.text==null)this.text=new JLabel();
         
-        this.bgDisabled.setVisible(false);
-        this.bgDisabled.setOpaque(false);
+        this.disabled.setVisible(false);
+        this.disabled.setOpaque(false);
         this.setLayout(new OverlayLayout(this));
-        this.add(this.bgDisabled);
+        this.add(this.disabled);
         this.add(this.content);
-        this.add(this.bg);
-        this.add(this.bgHover);
-        this.add(this.bgClicked);
+        this.add(this.normal);
+        this.add(this.hover);
+        this.add(this.clicked);
         this.refreshContent();
     }
     
@@ -196,10 +178,10 @@ public class JMPCButton extends JPanel {
                 this.addMouseListener(this.uiListener);
                 for(MouseListener l:this.listeners)this.addMouseListener(l);
             }
-            this.bg.setVisible(true);
-            this.bgHover.setVisible(!locked);
-            this.bgClicked.setVisible(!locked);
-            this.bgDisabled.setVisible(locked);
+            this.normal.setVisible(true);
+            this.hover.setVisible(!locked);
+            this.clicked.setVisible(!locked);
+            this.disabled.setVisible(locked);
 
             this.setEnabled(!locked);
             //this.refreshContent();
@@ -290,42 +272,59 @@ public class JMPCButton extends JPanel {
         this.uiListener=new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JMPCButton.this.grabFocus();
+                JMPCToggleButton.this.grabFocus();
+                JMPCToggleButton.this.setSelected(!JMPCToggleButton.this.selected);
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                JMPCButton.this.bgClicked.setVisible(true);
-                JMPCButton.this.bg.setVisible(false);
-                JMPCButton.this.bgHover.setVisible(false);
+                JMPCToggleButton.this.clicked.setVisible(true);
+                JMPCToggleButton.this.normal.setVisible(false);
+                JMPCToggleButton.this.select.setVisible(false);
+                JMPCToggleButton.this.hover.setVisible(false);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                JMPCButton.this.bgClicked.setVisible(false);
-                JMPCButton.this.bg.setVisible(true);
-                JMPCButton.this.bgHover.setVisible(false);
+                JMPCToggleButton.this.clicked.setVisible(false);
+                JMPCToggleButton.this.normal.setVisible(!JMPCToggleButton.this.selected);
+                JMPCToggleButton.this.select.setVisible(JMPCToggleButton.this.selected);
+                JMPCToggleButton.this.hover.setVisible(false);
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 //JMFunctions.trace("entered");
-                JMPCButton.this.bg.setVisible(false);
-                JMPCButton.this.bgHover.setVisible(true);
+                JMPCToggleButton.this.normal.setVisible(false);
+                JMPCToggleButton.this.select.setVisible(false);
+                JMPCToggleButton.this.hover.setVisible(true);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 //JMFunctions.trace("exited");
-                JMPCButton.this.bg.setVisible(true);
-                JMPCButton.this.bgHover.setVisible(false);
+                JMPCToggleButton.this.normal.setVisible(!JMPCToggleButton.this.selected);
+                JMPCToggleButton.this.select.setVisible(JMPCToggleButton.this.selected);
+                JMPCToggleButton.this.hover.setVisible(false);
             }
         };
         this.addMouseListener(this.uiListener);
     }
+    
+    public void setSelected(boolean selected){
+        this.selected=selected;
+        this.normal.setVisible(!JMPCToggleButton.this.selected);
+        this.select.setVisible(JMPCToggleButton.this.selected);
+        
+    }
+    public boolean isSelected(){
+        return this.selected;
+    }
+    
+    
     
 }

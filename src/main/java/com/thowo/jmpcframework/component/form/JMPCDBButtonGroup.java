@@ -14,7 +14,9 @@ import com.thowo.jmjavaframework.table.JMCell;
 import com.thowo.jmjavaframework.table.JMRow;
 import com.thowo.jmjavaframework.table.JMTable;
 import com.thowo.jmpcframework.component.JMPCButton;
+import com.thowo.jmpcframework.component.JMPCButtonSimple;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -37,18 +39,18 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     private JMTable table;
     private String formTitle;
     
-    private JMPCButton btnAdd;
-    private JMPCButton btnEdit;
-    private JMPCButton btnDelete;
-    private JMPCButton btnSave;
-    private JMPCButton btnPrint;
-    private JMPCButton btnNext;
-    private JMPCButton btnPrev;
-    private JMPCButton btnFirst;
-    private JMPCButton btnLast;
-    private JMPCButton btnView;
-    private JMPCButton btnRefresh;
-    private JMPCButton btnCancel;
+    private JMPCButtonSimple btnAdd;
+    private JMPCButtonSimple btnEdit;
+    private JMPCButtonSimple btnDelete;
+    private JMPCButtonSimple btnSave;
+    private JMPCButtonSimple btnPrint;
+    private JMPCButtonSimple btnNext;
+    private JMPCButtonSimple btnPrev;
+    private JMPCButtonSimple btnFirst;
+    private JMPCButtonSimple btnLast;
+    private JMPCButtonSimple btnView;
+    private JMPCButtonSimple btnRefresh;
+    private JMPCButtonSimple btnCancel;
     private int defWidth=50;
     private int defHeight=10;
     private List<Boolean> befFilter=new ArrayList();
@@ -66,18 +68,18 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     }
     
     private void setProp(boolean editing,boolean adding){
-        this.btnAdd=JMPCButton.create("Add", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnEdit=JMPCButton.create("Edit", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnDelete=JMPCButton.create("Delete", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnSave=JMPCButton.create("Save", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnPrint=JMPCButton.create("Print", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnNext=JMPCButton.create("Next", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnPrev=JMPCButton.create("Prev", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnFirst=JMPCButton.create("First", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnLast=JMPCButton.create("Last", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnView=JMPCButton.create("View", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnRefresh=JMPCButton.create("Refresh", JMVec2.create(this.defWidth, this.defHeight));
-        this.btnCancel=JMPCButton.create("Cancel", JMVec2.create(this.defWidth, this.defHeight));
+        this.btnAdd=JMPCButtonSimple.create("Print","img/buttons/db/add.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnEdit=JMPCButtonSimple.create("Edit","img/buttons/db/edit.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnDelete=JMPCButtonSimple.create("Delete","img/buttons/db/delete.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnSave=JMPCButtonSimple.create("Save","img/buttons/db/save.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnPrint=JMPCButtonSimple.create("Print","img/buttons/db/print.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnNext=JMPCButtonSimple.create("Next","img/buttons/db/next.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnPrev=JMPCButtonSimple.create("Prev","img/buttons/db/prev.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnFirst=JMPCButtonSimple.create("First","img/buttons/db/first.png", JMVec2.create(this.defWidth, this.defHeight));
+        this.btnLast=JMPCButtonSimple.create("Last","img/buttons/db/last.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnView=JMPCButtonSimple.create("View","img/buttons/db/view.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnRefresh=JMPCButtonSimple.create("Refresh","img/buttons/db/refresh.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnCancel=JMPCButtonSimple.create("Cancel","img/buttons/db/cancel.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
         this.view(editing,adding);
     }
     private void display(boolean editing,boolean adding){
@@ -355,76 +357,76 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     
     
 
-    public JMPCButton getBtnCancel() {
+    public JMPCButtonSimple getBtnCancel() {
         return btnCancel;
     }
-    public void setBtnCancel(JMPCButton btnCancel) {
+    public void setBtnCancel(JMPCButtonSimple btnCancel) {
         this.btnCancel = btnCancel;
     }
-    public JMPCButton getBtnRefresh() {
+    public JMPCButtonSimple getBtnRefresh() {
         return btnRefresh;
     }
-    public void setBtnRefresh(JMPCButton btnRefresh) {
+    public void setBtnRefresh(JMPCButtonSimple btnRefresh) {
         this.btnRefresh = btnRefresh;
     }
-    public JMPCButton getBtnView() {
+    public JMPCButtonSimple getBtnView() {
         return btnView;
     }
-    public void setBtnView(JMPCButton btnView) {
+    public void setBtnView(JMPCButtonSimple btnView) {
         this.btnView = btnView;
     }
-    public JMPCButton getBtnAdd() {
+    public JMPCButtonSimple getBtnAdd() {
         return btnAdd;
     }
-    public void setBtnAdd(JMPCButton btnAdd) {
+    public void setBtnAdd(JMPCButtonSimple btnAdd) {
         this.btnAdd = btnAdd;
     }
-    public JMPCButton getBtnEdit() {
+    public JMPCButtonSimple getBtnEdit() {
         return btnEdit;
     }
-    public void setBtnEdit(JMPCButton btnEdit) {
+    public void setBtnEdit(JMPCButtonSimple btnEdit) {
         this.btnEdit = btnEdit;
     }
-    public JMPCButton getBtnDelete() {
+    public JMPCButtonSimple getBtnDelete() {
         return btnDelete;
     }
-    public void setBtnDelete(JMPCButton btnDelete) {
+    public void setBtnDelete(JMPCButtonSimple btnDelete) {
         this.btnDelete = btnDelete;
     }
-    public JMPCButton getBtnSave() {
+    public JMPCButtonSimple getBtnSave() {
         return btnSave;
     }
-    public void setBtnSave(JMPCButton btnSave) {
+    public void setBtnSave(JMPCButtonSimple btnSave) {
         this.btnSave = btnSave;
     }
-    public JMPCButton getBtnPrint() {
+    public JMPCButtonSimple getBtnPrint() {
         return btnPrint;
     }
-    public void setBtnPrint(JMPCButton btnPrint) {
+    public void setBtnPrint(JMPCButtonSimple btnPrint) {
         this.btnPrint = btnPrint;
     }
-    public JMPCButton getBtnNext() {
+    public JMPCButtonSimple getBtnNext() {
         return btnNext;
     }
-    public void setBtnNext(JMPCButton btnNext) {
+    public void setBtnNext(JMPCButtonSimple btnNext) {
         this.btnNext = btnNext;
     }
-    public JMPCButton getBtnPrev() {
+    public JMPCButtonSimple getBtnPrev() {
         return btnPrev;
     }
-    public void setBtnPrev(JMPCButton btnPrev) {
+    public void setBtnPrev(JMPCButtonSimple btnPrev) {
         this.btnPrev = btnPrev;
     }
-    public JMPCButton getBtnFirst() {
+    public JMPCButtonSimple getBtnFirst() {
         return btnFirst;
     }
-    public void setBtnFirst(JMPCButton btnFirst) {
+    public void setBtnFirst(JMPCButtonSimple btnFirst) {
         this.btnFirst = btnFirst;
     }
-    public JMPCButton getBtnLast() {
+    public JMPCButtonSimple getBtnLast() {
         return btnLast;
     }
-    public void setBtnLast(JMPCButton btnLast) {
+    public void setBtnLast(JMPCButtonSimple btnLast) {
         this.btnLast = btnLast;
     }
 

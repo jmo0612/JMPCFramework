@@ -6,6 +6,7 @@
 package com.thowo.jmpcframework.component;
 
 import com.thowo.jmjavaframework.JMFunctions;
+import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmpcframework.JMPCFunctions;
 import com.thowo.jmpcframework.others.ComponentResizer;
 import java.awt.BorderLayout;
@@ -45,9 +46,9 @@ import javax.swing.SwingConstants;
 public class JMPCForm extends JFrame {
     private JMPCAsyncLoaderPanel asyncLoader;
     private JMPCLoadingSprite loadingSprite;
-    private JButton min=new JButton("Min");
-    private JToggleButton full=new JToggleButton("Full");
-    private JButton close=new JButton("Close");
+    private JMPCButtonSmall min;
+    private JMPCToggleButton full;
+    private JMPCButtonSmall close;
     
     
     protected void toggleFullscreen(boolean fullscreen){
@@ -83,10 +84,13 @@ public class JMPCForm extends JFrame {
         
         //p.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         p.setOpaque(false);
+        this.close=JMPCButtonSmall.create("","img/buttons/small/close.png", JMVec2.create(30, 30));
+        this.min=JMPCButtonSmall.create("","img/buttons/small/min.png", JMVec2.create(30, 30));
+        this.full=JMPCToggleButton.create("","img/buttons/small/max.png", JMVec2.create(30, 30));
         p.add(this.min);
         p.add(this.full);
         p.add(this.close);
-        //bg.add(p);
+        bg.add(p);
         bg.add(this.loadingSprite);
         bg.add(content);
         content.setOpacity(1.0f);
@@ -104,21 +108,21 @@ public class JMPCForm extends JFrame {
     }
     
     private void addListener(){
-        this.full.addActionListener(new ActionListener(){
+        this.full.setAction(new Runnable(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void run() {
                 JMPCForm.this.toggleFullscreen();
             }
         });
-        this.min.addActionListener(new ActionListener(){
+        this.min.setAction(new Runnable(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void run() {
                 JMPCForm.this.minimize();
             }
         });
-        this.close.addActionListener(new ActionListener(){
+        this.close.setAction(new Runnable(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void run() {
                 JMPCForm.this.close();
             }
         });

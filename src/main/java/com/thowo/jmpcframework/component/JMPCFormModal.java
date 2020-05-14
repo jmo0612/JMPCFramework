@@ -6,8 +6,10 @@
 package com.thowo.jmpcframework.component;
 
 import com.thowo.jmjavaframework.JMFunctions;
+import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmpcframework.others.ComponentResizer;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -28,7 +30,7 @@ import javax.swing.OverlayLayout;
 public class JMPCFormModal extends JDialog{
     private JMPCAsyncLoaderPanel asyncLoader;
     private JMPCLoadingSprite loadingSprite;
-    private JButton close=new JButton("Close");
+    private JMPCButtonSmall close;
     
     public JMPCFormModal(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -55,8 +57,9 @@ public class JMPCFormModal extends JDialog{
         
         //p.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         p.setOpaque(false);
+        this.close=JMPCButtonSmall.create("","img/buttons/small/close.png", JMVec2.create(30, 30));
         p.add(this.close);
-        //sbg.add(p);
+        bg.add(p);
         bg.add(this.loadingSprite);
         bg.add(content);
         content.setOpacity(1.0f);
@@ -74,9 +77,9 @@ public class JMPCFormModal extends JDialog{
     }
     
     private void addListener(){
-        this.close.addActionListener(new ActionListener(){
+        this.close.setAction(new Runnable(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void run() {
                 JMPCFormModal.this.close();
             }
         });
