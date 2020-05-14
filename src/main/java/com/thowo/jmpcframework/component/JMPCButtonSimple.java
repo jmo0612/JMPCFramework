@@ -73,7 +73,7 @@ public class JMPCButtonSimple extends JPanel {
         this.refreshContent();
         return this;
     }
-    private JMPCButtonSimple setText(String text){
+    public JMPCButtonSimple setText(String text){
         this.text.setText(text);
         return this;
     }
@@ -309,7 +309,6 @@ public class JMPCButtonSimple extends JPanel {
         };
         this.addMouseListener(this.uiListener);
     }
-    
     
     
 }

@@ -68,14 +68,14 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     }
     
     private void setProp(boolean editing,boolean adding){
-        this.btnAdd=JMPCButtonSimple.create("Print","img/buttons/db/add.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnAdd=JMPCButtonSimple.create("Add","img/buttons/db/add.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
         this.btnEdit=JMPCButtonSimple.create("Edit","img/buttons/db/edit.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
         this.btnDelete=JMPCButtonSimple.create("Delete","img/buttons/db/delete.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
         this.btnSave=JMPCButtonSimple.create("Save","img/buttons/db/save.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
         this.btnPrint=JMPCButtonSimple.create("Print","img/buttons/db/print.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
         this.btnNext=JMPCButtonSimple.create("Next","img/buttons/db/next.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
         this.btnPrev=JMPCButtonSimple.create("Prev","img/buttons/db/prev.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnFirst=JMPCButtonSimple.create("First","img/buttons/db/first.png", JMVec2.create(this.defWidth, this.defHeight));
+        this.btnFirst=JMPCButtonSimple.create("First","img/buttons/db/first.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
         this.btnLast=JMPCButtonSimple.create("Last","img/buttons/db/last.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
         this.btnView=JMPCButtonSimple.create("View","img/buttons/db/view.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
         this.btnRefresh=JMPCButtonSimple.create("Refresh","img/buttons/db/refresh.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);

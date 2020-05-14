@@ -328,4 +328,9 @@ public class JMPCButton extends JPanel {
         this.addMouseListener(this.uiListener);
     }
     
+    public JMPCButton setText(String text){
+        this.text.setText(text);
+        return this;
+    }
+    
 }

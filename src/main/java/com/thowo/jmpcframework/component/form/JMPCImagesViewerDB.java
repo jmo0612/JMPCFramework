@@ -12,6 +12,8 @@ import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmjavaframework.table.JMRow;
 import com.thowo.jmpcframework.JMPCFunctions;
 import com.thowo.jmpcframework.component.JMPCButton;
+import com.thowo.jmpcframework.component.JMPCButtonSimple;
+import com.thowo.jmpcframework.component.JMPCButtonSmall;
 import com.thowo.jmpcframework.component.JMPCImagesViewer;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -61,7 +63,7 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
     private JPanel pnlView;
     private JLabel lblView;
     private Image imgView;
-    private JMPCButton btnAdd;
+    private JMPCButtonSimple btnAdd;
     private int width;
     private int height;
     private List<Integer> selected;
@@ -103,7 +105,7 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
         this.pnlList=new JPanel();
         this.pnlView=new JPanel();
         this.lblView=new JLabel();
-        this.btnAdd=JMPCButton.create("Add", JMVec2.create(100, 20));
+        this.btnAdd=JMPCButtonSimple.create("Scan","img/buttons/db/scan.png", JMVec2.create(50, 50)).setFontColor(Color.decode("#234e79")).increaseFontSize(-10);
         this.btnAdd.setLocked((!(this.editable && this.editMode)));
         this.setContainer();
     }
