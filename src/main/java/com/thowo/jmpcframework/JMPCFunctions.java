@@ -91,8 +91,8 @@ public class JMPCFunctions{
         if(!JMFunctions.fileExist(doc)){
             JMFunctions.createFile(doc);
         }
-        File languageExcelFile = new File(JMPCFunctions.class.getClassLoader().getResource("raw/jmlanguagepack.xls").getFile());
-        JMFunctions.init(languageExcelFile,myAppCacheDir,myAppDocDir,localeId);
+        //File languageExcelFile = new File(JMPCFunctions.class.getClassLoader().getResource("raw/jmlanguagepack.xls").getFile());
+        JMFunctions.init(null,myAppCacheDir,myAppDocDir,localeId);
     }
     
     public static void panelBGImage(JPanel panel,String imgResPath){
