@@ -19,8 +19,17 @@ import com.thowo.jmjavaframework.JMFunctions;
 import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmjavaframework.table.JMCell;
 import com.thowo.jmjavaframework.table.JMTable;
+import com.thowo.jmpcframework.component.JMPCForm;
 import com.thowo.jmpcframework.component.JMPCUIMessenger;
 import java.awt.Image;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
@@ -147,6 +156,81 @@ public class JMPCFunctions{
         ret.setBounds(scaled.get(1).getIntX(), scaled.get(1).getIntY(), scaled.get(0).getIntX(), scaled.get(0).getIntY());
         return ret;
     }
+    
+    public static JLabel getImageWithSize(String resId, Class<?> CLASS, JMVec2 size){
+        URL tmp=null;
+        if(CLASS==null){
+            tmp=JMFunctions.getResourcePath(resId);
+        }else{
+            tmp=JMFunctions.getResourcePath(resId,CLASS);
+        }
+        if(tmp==null){
+            return getImage("");
+        }else{
+            JLabel ret=new JLabel("NULL");
+            Image img=new ImageIcon(tmp.getPath()).getImage();
+            JMVec2 imgSize=new JMVec2(img.getWidth(null),img.getHeight(null));
+            if(size==null)size=imgSize;
+            List<JMVec2> scaled=JMFunctions.scaledSize(imgSize, size, JMFunctions.SCALE_FIT);
+            ImageIcon ico=new ImageIcon(img.getScaledInstance(scaled.get(0).getIntX(), scaled.get(0).getIntY(), Image.SCALE_SMOOTH));
+            ret=new JLabel(ico);
+            ret.setBounds(scaled.get(1).getIntX(), scaled.get(1).getIntY(), scaled.get(0).getIntX(), scaled.get(0).getIntY());
+            return ret;
+        }
+    }
+    
+    private static void resizeImage(URL tmp, JPanel panel){
+        JLabel ret=new JLabel("NULL");
+        Image img=new ImageIcon(tmp.getPath()).getImage();
+        JMVec2 imgSize=new JMVec2(img.getWidth(null),img.getHeight(null));
+        JMVec2 size=JMVec2.create(panel.getWidth(), panel.getHeight());
+        List<JMVec2> scaled=JMFunctions.scaledSize(imgSize, size, JMFunctions.SCALE_FIT);
+        ImageIcon ico=new ImageIcon(img.getScaledInstance(scaled.get(0).getIntX(), scaled.get(0).getIntY(), Image.SCALE_SMOOTH));
+        ret=new JLabel(ico);
+        ret.setBounds(scaled.get(1).getIntX(), scaled.get(1).getIntY(), scaled.get(0).getIntX(), scaled.get(0).getIntY());
+        panel.removeAll();
+        panel.add(ret);
+    }
+    
+    public static void attachImageToAnEmptyPanelOnForm(String resId, Class<?> CLASS, JPanel panel, JMPCForm form){
+        if(panel==null || form==null)return;
+        URL tmp=null;
+        if(CLASS==null){
+            tmp=JMFunctions.getResourcePath(resId);
+        }else{
+            tmp=JMFunctions.getResourcePath(resId,CLASS);
+        }
+        if(tmp==null){
+            return ;
+        }else{
+            JMPCFunctions.resizeImage(tmp, panel);
+            final URL tmp2=tmp;
+            panel.addComponentListener(new ComponentListener() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    JMPCFunctions.resizeImage(tmp2, panel);
+                    form.repaint();
+                }
+
+                @Override
+                public void componentMoved(ComponentEvent e) {
+                    
+                }
+
+                @Override
+                public void componentShown(ComponentEvent e) {
+                    
+                }
+
+                @Override
+                public void componentHidden(ComponentEvent e) {
+                    
+                }
+            });
+            
+        }
+    }
+    
     public static JLabel getImage(String path){
         return getImageWithSize(path,null);
     }

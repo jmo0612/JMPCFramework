@@ -108,7 +108,18 @@ public class JMPCTable extends JTable implements JMFormInterface{
 
             @Override
             public void keyReleased(KeyEvent e) {
-                if(e.getKeyCode()==e.VK_DOWN){
+                if(e.getKeyCode()==e.VK_DOWN || e.getKeyCode()==e.VK_UP){
+                    int ind=JMPCTable.this.getSelectedRow();
+                    if(!JMPCTable.this.table.getFilter().equals(""))ind=JMPCTable.this.getRowSorter().convertRowIndexToModel(JMPCTable.this.getSelectedRow());
+                    List<Integer> keys=JMPCTable.this.table.getKeyColumns();
+                    List<String> vals=new ArrayList();
+                    for(Integer key:keys){
+                        JMPCCellObject tmp=(JMPCCellObject) JMPCTable.this.model.getValueAt(ind, key);
+                        vals.add(tmp.getValueString());
+                    }
+                    JMPCTable.this.table.gotoRow(vals, true);
+                }
+                /*if(e.getKeyCode()==e.VK_DOWN){
                     if(JMPCTable.this.table.getFilter().equals("")){
                         JMPCTable.this.table.nextRow(true);
                     }else{
@@ -133,14 +144,23 @@ public class JMPCTable extends JTable implements JMFormInterface{
                         }
                         JMPCTable.this.table.gotoRow(vals, true);
                     }
-                }
+                }*/
             }
         });
         
         this.addMouseListener(new MouseListener(){
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(JMPCTable.this.table.getFilter().equals(""))JMPCTable.this.table.gotoRow(JMPCTable.this.getSelectedRow(), true);
+                int ind=JMPCTable.this.getSelectedRow();
+                if(!JMPCTable.this.table.getFilter().equals(""))ind=JMPCTable.this.getRowSorter().convertRowIndexToModel(JMPCTable.this.getSelectedRow());
+                List<Integer> keys=JMPCTable.this.table.getKeyColumns();
+                List<String> vals=new ArrayList();
+                for(Integer key:keys){
+                    JMPCCellObject tmp=(JMPCCellObject) JMPCTable.this.model.getValueAt(ind, key);
+                    vals.add(tmp.getValueString());
+                }
+                JMPCTable.this.table.gotoRow(vals, true);
+                /*if(JMPCTable.this.table.getFilter().equals(""))JMPCTable.this.table.gotoRow(JMPCTable.this.getSelectedRow(), true);
                 else{
                     List<Integer> keys=JMPCTable.this.table.getKeyColumns();
                     List<String> vals=new ArrayList();
@@ -149,7 +169,7 @@ public class JMPCTable extends JTable implements JMFormInterface{
                         vals.add(tmp.getValueString());
                     }
                     JMPCTable.this.table.gotoRow(vals, true);
-                }
+                }*/
             }
 
             @Override
@@ -246,10 +266,17 @@ public class JMPCTable extends JTable implements JMFormInterface{
     public void actionAfterMovedNext(JMRow nextRow) {
         this.currentRow=nextRow;
         if(nextRow!=null){
-            if(nextRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
+            if(this.table.getFilter().equals("")){
+                if(nextRow.getRowNum()>=this.getRowCount()){
+                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                }
+                if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(nextRow.getRowNum(), nextRow.getRowNum());
+            }
+            
+            /*if(nextRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
                 model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
             }
-            if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(nextRow.getRowNum(), nextRow.getRowNum());
+            if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(nextRow.getRowNum(), nextRow.getRowNum());*/
         }
     }
 
@@ -257,10 +284,17 @@ public class JMPCTable extends JTable implements JMFormInterface{
     public void actionAfterMovedPrev(JMRow prevRow) {
         this.currentRow=prevRow;
         if(prevRow!=null){
-            if(prevRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
+            if(this.table.getFilter().equals("")){
+                if(prevRow.getRowNum()>=this.getRowCount()){
+                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                }
+                if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(prevRow.getRowNum(), prevRow.getRowNum());
+            }
+            
+            /*if(prevRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
                 model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
             }
-            if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(prevRow.getRowNum(), prevRow.getRowNum());
+            if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(prevRow.getRowNum(), prevRow.getRowNum());*/
         }
     }
 
@@ -268,10 +302,17 @@ public class JMPCTable extends JTable implements JMFormInterface{
     public void actionAfterMovedFirst(JMRow firstRow) {
         this.currentRow=firstRow;
         if(firstRow!=null){
-            if(firstRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
+            if(this.table.getFilter().equals("")){
+                if(firstRow.getRowNum()>=this.getRowCount()){
+                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                }
+                if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(firstRow.getRowNum(), firstRow.getRowNum());
+            }
+            
+            /*if(firstRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
                 model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
             }
-            if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(firstRow.getRowNum(), firstRow.getRowNum());
+            if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(firstRow.getRowNum(), firstRow.getRowNum());*/
         }
     }
 
@@ -279,10 +320,17 @@ public class JMPCTable extends JTable implements JMFormInterface{
     public void actionAfterMovedLast(JMRow lastRow) {
         this.currentRow=lastRow;
         if(lastRow!=null){
-            if(lastRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
+            if(this.table.getFilter().equals("")){
+                if(lastRow.getRowNum()>=this.getRowCount()){
+                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                }
+                if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(lastRow.getRowNum(), lastRow.getRowNum());
+            }
+            
+            /*if(lastRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
                 model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
             }
-            if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(lastRow.getRowNum(), lastRow.getRowNum());
+            if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(lastRow.getRowNum(), lastRow.getRowNum());*/
         }
     }
 
@@ -290,10 +338,17 @@ public class JMPCTable extends JTable implements JMFormInterface{
     public void actionAfterMovedtoRecord(JMRow currentRow) {
         this.currentRow=currentRow;
         if(currentRow!=null){
-            if(currentRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
+            if(this.table.getFilter().equals("")){
+                if(currentRow.getRowNum()>=this.getRowCount()){
+                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                }
+                if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(currentRow.getRowNum(), currentRow.getRowNum());
+            }
+            
+            /*if(currentRow.getRowNum()>=this.getRowCount() && this.table.getFilter().equals("")){
                 model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
             }
-            if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(currentRow.getRowNum(), currentRow.getRowNum());
+            if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(currentRow.getRowNum(), currentRow.getRowNum());*/
         }
     }
 

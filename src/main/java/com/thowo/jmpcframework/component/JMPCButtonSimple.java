@@ -126,7 +126,7 @@ public class JMPCButtonSimple extends JPanel {
     private void view(String resId){
         String img=JMFunctions.removeExtension(resId);
         String ext=JMFunctions.getExtension(resId);
-        JMFunctions.trace(img+"_hover"+ext);
+        //JMFunctions.trace(img+"_hover"+ext);
         if(this.normal==null)this.normal=JMPCFunctions.getImageOpaque(resId, this.getClass(), this.size);
         if(this.hover==null)this.hover=JMPCFunctions.getImageOpaque(img+"_hover"+ext, this.getClass(), this.size);
         if(this.disabled==null)this.disabled=JMPCFunctions.getImageOpaque(img+"_disabled"+ext, this.getClass(), this.size);
