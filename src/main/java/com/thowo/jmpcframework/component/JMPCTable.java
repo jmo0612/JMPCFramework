@@ -228,7 +228,7 @@ public class JMPCTable extends JTable implements JMFormInterface{
     }
 
     @Override
-    public void actionAfterDeleted(JMRow rowDeleted, boolean deleted) {
+    public void actionAfterDeleted(JMRow rowDeleted, boolean deleted, String extra) {
         if(deleted){
             this.table.filter("");
             if(rowDeleted.getRowNum()<this.getRowCount())model.removeRow(rowDeleted.getRowNum());
@@ -353,7 +353,7 @@ public class JMPCTable extends JTable implements JMFormInterface{
     }
 
     @Override
-    public void actionAfterCanceled(JMRow rowCanceled, boolean canceled) {
+    public void actionAfterCanceled(JMRow newCurrentRow, boolean canceled, JMRow canceledRow) {
         //if(canceled)this.currentRow=rowCanceled;
     }
 

@@ -202,7 +202,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         this.table.cancelEdit(JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_CANCEL_EDITING)+" "+formTitle+"?", JOptionPane.YES_OPTION);
     }
     public void btnDeleteClick(){
-        this.table.deleteRow(this.table.getCurrentRow(), JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_DELETE)+" "+formTitle+"?", JOptionPane.YES_OPTION);
+        this.table.deleteRow(this.table.getCurrentRow(), JMFunctions.getMessege(JMConstMessage.MSG_ELSE+JMConstMessage.MSG_ELSE_DELETE)+" "+formTitle+"?", JOptionPane.YES_OPTION,null);
     }
     public void btnAddClick(){
         //List<String> fieldNames=this.table.getStyle().getFieldNames();
@@ -220,6 +220,8 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     }
     
     private void backUpState(){
+        if(!this.befFilter.isEmpty())return;
+        JMFunctions.trace("Backed up");
         this.befFilter.clear();
         this.befFilter.add(this.btnAdd.isLocked());
         this.befFilter.add(this.btnSave.isLocked());
@@ -235,8 +237,10 @@ public class JMPCDBButtonGroup implements JMFormInterface{
         this.befFilter.add(this.btnDelete.isLocked());
     }
     private void stateFilter(){
-        if(this.befFilter.isEmpty())this.backUpState();
+        if(this.befFilter.isEmpty())return;
+        //if(this.befFilter.isEmpty())this.backUpState();
         String filter=this.table.getFilter();
+        //JMFunctions.trace("Button locked:"+this.befFilter.get(0)+",   Search empty:"+filter.equals(""));
         this.btnAdd.setLocked(this.befFilter.get(0)||!filter.equals(""));
         //this.btnSave.setLocked(this.befFilter.get(1));
         //this.btnRefresh.setLocked(this.befFilter.get(2));
@@ -439,7 +443,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     }
 
     @Override
-    public void actionAfterDeleted(JMRow rowDeleted, boolean deleted) {
+    public void actionAfterDeleted(JMRow rowDeleted, boolean deleted, String extra) {
         this.stateDelete();
     }
 
@@ -494,7 +498,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     }
 
     @Override
-    public void actionAfterCanceled(JMRow rowCanceled, boolean canceled) {
+    public void actionAfterCanceled(JMRow newCurrentRow, boolean canceled, JMRow canceledRow) {
         if(canceled)this.stateInit();
     }
 
