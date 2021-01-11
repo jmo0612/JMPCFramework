@@ -6,10 +6,11 @@
 package com.thowo.jmpcframework.component;
 
 import com.thowo.jmjavaframework.JMDataContainer;
-import com.thowo.jmjavaframework.JMFormInterface;
+import com.thowo.jmjavaframework.JMTableInterface;
 import com.thowo.jmjavaframework.JMFunctions;
 import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmjavaframework.table.JMCell;
+import com.thowo.jmjavaframework.table.JMDBListInterface;
 import com.thowo.jmjavaframework.table.JMRow;
 import com.thowo.jmjavaframework.table.JMTable;
 import com.thowo.jmpcframework.JMPCFunctions;
@@ -34,16 +35,27 @@ import javax.swing.table.TableRowSorter;
  *
  * @author jimi
  */
-public class JMPCTable extends JTable implements JMFormInterface{
+public class JMPCTable extends JTable implements JMTableInterface, JMDBListInterface{
     private JMTable table;
     private DefaultTableModel model;
     private JMRow currentRow;
-    
+    private KeyListener actionKeyListener;
+    private MouseListener actionMouseListener;
     
     public static JMPCTable create(JMTable table){
         return new JMPCTable(table);
     }
+    public static JMPCTable create(){
+        return new JMPCTable();
+    }
     public JMPCTable(JMTable table){
+        this.initProps(table);
+        
+    }
+    public JMPCTable(){
+        
+    }
+    private void initProps(JMTable table){
         this.setProp(table);
         if(table!=null){
             //if(table.isEmpty())return;
@@ -69,7 +81,10 @@ public class JMPCTable extends JTable implements JMFormInterface{
             
             
             this.refreshLayout();
-            if(!table.isEmpty())this.setRowSelectionInterval(0, 0);
+            if(!table.isEmpty()){
+                //this.setRowSelectionInterval(0, 0);
+                table.gotoRow(0, true);
+            }
         }
         this.addListener();
     }
@@ -88,9 +103,13 @@ public class JMPCTable extends JTable implements JMFormInterface{
         this.setRowSelectionAllowed(true);
     }
     private void setProp(JMTable table){
+        table.removeInterface(this);
         this.table=table;
         this.table.addInterface(this);
         this.model=(DefaultTableModel)this.getModel();
+        //this.model=new DefaultTableModel();
+        this.model.setRowCount(0);
+        this.model.setColumnCount(0);
         this.setModel(this.model);
         
     }
@@ -223,7 +242,9 @@ public class JMPCTable extends JTable implements JMFormInterface{
 
     @Override
     public void actionAfterAdded(JMRow rowAdded) {
+        //JMFunctions.traceAndShow("ADDED");
         model.addRow(this.getRowData(rowAdded.getDataContainers(),true));
+        this.setRowSelectionInterval(rowAdded.getRowNum(), rowAdded.getRowNum());
         this.currentRow=rowAdded;
     }
 
@@ -254,7 +275,8 @@ public class JMPCTable extends JTable implements JMFormInterface{
 
     @Override
     public void actionAfterRefreshed(JMRow rowRefreshed) {
-        
+        this.init(this.table);
+        this.table.gotoRow(rowRefreshed, true);
     }
 
     @Override
@@ -268,7 +290,7 @@ public class JMPCTable extends JTable implements JMFormInterface{
         if(nextRow!=null){
             if(this.table.getFilter().equals("")){
                 if(nextRow.getRowNum()>=this.getRowCount()){
-                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                    //model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
                 }
                 if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(nextRow.getRowNum(), nextRow.getRowNum());
             }
@@ -286,7 +308,7 @@ public class JMPCTable extends JTable implements JMFormInterface{
         if(prevRow!=null){
             if(this.table.getFilter().equals("")){
                 if(prevRow.getRowNum()>=this.getRowCount()){
-                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                    //model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
                 }
                 if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(prevRow.getRowNum(), prevRow.getRowNum());
             }
@@ -304,7 +326,7 @@ public class JMPCTable extends JTable implements JMFormInterface{
         if(firstRow!=null){
             if(this.table.getFilter().equals("")){
                 if(firstRow.getRowNum()>=this.getRowCount()){
-                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                    //model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
                 }
                 if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(firstRow.getRowNum(), firstRow.getRowNum());
             }
@@ -322,7 +344,7 @@ public class JMPCTable extends JTable implements JMFormInterface{
         if(lastRow!=null){
             if(this.table.getFilter().equals("")){
                 if(lastRow.getRowNum()>=this.getRowCount()){
-                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                    //model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
                 }
                 if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(lastRow.getRowNum(), lastRow.getRowNum());
             }
@@ -340,7 +362,7 @@ public class JMPCTable extends JTable implements JMFormInterface{
         if(currentRow!=null){
             if(this.table.getFilter().equals("")){
                 if(currentRow.getRowNum()>=this.getRowCount()){
-                    model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
+                    //model.addRow(this.getRowData(table.getCurrentRowDatas(),true));
                 }
                 if(currentRow.getRowNum()<this.getRowCount())this.setRowSelectionInterval(currentRow.getRowNum(), currentRow.getRowNum());
             }
@@ -370,6 +392,81 @@ public class JMPCTable extends JTable implements JMFormInterface{
     @Override
     public void actionBeforeFilter(String filter) {
         
+    }
+
+    @Override
+    public void setOnSelected(Runnable selectedAction) {
+        //JMFunctions.trace("HOHOHOHOHOHOHO");
+        if(this.actionKeyListener!=null){
+            this.removeKeyListener(this.actionKeyListener);
+        }
+        this.actionKeyListener=new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode()==e.VK_ENTER)e.consume();
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode()==e.VK_ENTER){
+                    selectedAction.run();
+                }
+            }
+        };
+        this.addKeyListener(this.actionKeyListener);
+        if(this.actionMouseListener!=null){
+            this.removeMouseListener(this.actionMouseListener);
+        }
+        this.actionMouseListener=new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getClickCount()==2 && !e.isConsumed()){
+                    selectedAction.run();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                
+            }
+        };
+        this.addMouseListener(this.actionMouseListener);
+    }
+
+    @Override
+    public void setOnMoved(Runnable movedAction) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setOnViewedOption(Runnable viewedOptionAction) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void init(JMTable table) {
+        //JMFunctions.traceAndShow("INIT");
+        this.initProps(table);
     }
 
     

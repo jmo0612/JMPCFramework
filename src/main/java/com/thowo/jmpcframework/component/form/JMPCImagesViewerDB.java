@@ -5,9 +5,10 @@
  */
 package com.thowo.jmpcframework.component.form;
 
+import com.thowo.jmjavaframework.JMColor;
 import com.thowo.jmjavaframework.JMDataContainer;
 import com.thowo.jmjavaframework.JMFunctions;
-import com.thowo.jmjavaframework.JMInputInterface;
+import com.thowo.jmjavaframework.JMFieldInterface;
 import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmjavaframework.table.JMRow;
 import com.thowo.jmpcframework.JMPCFunctions;
@@ -45,7 +46,7 @@ import javax.swing.SwingUtilities;
  *
  * @author jimi
  */
-public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
+public class JMPCImagesViewerDB extends JPanel implements JMFieldInterface{
     private String value="";
     private boolean edited=false;
     private JMDataContainer dc;
@@ -105,7 +106,7 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
         this.pnlList=new JPanel();
         this.pnlView=new JPanel();
         this.lblView=new JLabel();
-        this.btnAdd=JMPCButtonSimple.create("","img/buttons/db/scan.png", JMVec2.create(40, 40)).setFontColor(Color.decode("#234e79")).decreaseFontSize(3);
+        this.btnAdd=(JMPCButtonSimple)JMPCButtonSimple.create("","img/buttons/db/scan.png", JMVec2.create(40, 40)).setFontColor(JMColor.decode("#234e79")).decreaseFontSize(3);
         this.btnAdd.setLocked((!(this.editable && this.editMode)));
         this.setContainer();
     }
@@ -526,19 +527,7 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
             //this.dc.setValueString(keyValue,false,false);
         }
     }
-    public void setEditMode(boolean editMode, JMRow currentRow, int column){
-        if(currentRow!=null){
-            int col=column;
-            //this.dc=currentRow.getDataContainers().get(col);
-            this.dc=currentRow.getCells().get(col).getDataContainer();
-            if(!this.dc.isInterfaceRegistered(this))this.dc.addInterface(this, true);
-        }else{
-            this.setKeyValue("");
-        }
-        this.editMode=editMode;
-        this.canEdit=(this.editable && editMode);
-        this.btnAdd.setLocked((!(this.editable && editMode)));
-    }
+    
     public JMPCImagesViewerDB setEditable(boolean editable){
         this.editable=editable;
         return this;
@@ -585,5 +574,30 @@ public class JMPCImagesViewerDB extends JPanel implements JMInputInterface{
     @Override
     public void setValueObject(Object value) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setEditMode(boolean editMode, JMRow currentRow, int column) {
+        if(currentRow!=null){
+            int col=column;
+            //this.dc=currentRow.getDataContainers().get(col);
+            this.dc=currentRow.getCells().get(col).getDataContainer();
+            if(!this.dc.isInterfaceRegistered(this))this.dc.addInterface(this, true);
+        }else{
+            this.setKeyValue("");
+        }
+        this.editMode=editMode;
+        this.canEdit=(this.editable && editMode);
+        this.btnAdd.setLocked((!(this.editable && editMode)));
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.setEditable(!disabled);
+    }
+
+    @Override
+    public void setLookUpAction(Runnable action) {
+        
     }
 }

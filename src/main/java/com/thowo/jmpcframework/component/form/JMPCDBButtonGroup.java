@@ -5,9 +5,10 @@
  */
 package com.thowo.jmpcframework.component.form;
 
-import com.thowo.jmjavaframework.JMFormInterface;
+import com.thowo.jmjavaframework.JMColor;
+import com.thowo.jmjavaframework.JMTableInterface;
 import com.thowo.jmjavaframework.JMFunctions;
-import com.thowo.jmjavaframework.JMInputInterface;
+import com.thowo.jmjavaframework.JMFieldInterface;
 import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmjavaframework.lang.JMConstMessage;
 import com.thowo.jmjavaframework.table.JMCell;
@@ -33,7 +34,7 @@ import javax.swing.SwingUtilities;
  *
  * @author jimi
  */
-public class JMPCDBButtonGroup implements JMFormInterface{
+public class JMPCDBButtonGroup implements JMTableInterface{
     private JPanel op=new JPanel();
     private JPanel rec=new JPanel();
     private JMTable table;
@@ -68,18 +69,18 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     }
     
     private void setProp(boolean editing,boolean adding){
-        this.btnAdd=JMPCButtonSimple.create("Add","img/buttons/db/add.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnEdit=JMPCButtonSimple.create("Edit","img/buttons/db/edit.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnDelete=JMPCButtonSimple.create("Delete","img/buttons/db/delete.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnSave=JMPCButtonSimple.create("Save","img/buttons/db/save.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnPrint=JMPCButtonSimple.create("Print","img/buttons/db/print.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnNext=JMPCButtonSimple.create("Next","img/buttons/db/next.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnPrev=JMPCButtonSimple.create("Prev","img/buttons/db/prev.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnFirst=JMPCButtonSimple.create("First","img/buttons/db/first.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnLast=JMPCButtonSimple.create("Last","img/buttons/db/last.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnView=JMPCButtonSimple.create("View","img/buttons/db/view.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnRefresh=JMPCButtonSimple.create("Refresh","img/buttons/db/refresh.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
-        this.btnCancel=JMPCButtonSimple.create("Cancel","img/buttons/db/cancel.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(Color.decode("#234e79")).increaseFontSize(2);
+        this.btnAdd=(JMPCButtonSimple)JMPCButtonSimple.create("Add","img/buttons/db/add.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnEdit=(JMPCButtonSimple)JMPCButtonSimple.create("Edit","img/buttons/db/edit.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnDelete=(JMPCButtonSimple)JMPCButtonSimple.create("Delete","img/buttons/db/delete.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnSave=(JMPCButtonSimple)JMPCButtonSimple.create("Save","img/buttons/db/save.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnPrint=(JMPCButtonSimple)JMPCButtonSimple.create("Print","img/buttons/db/print.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnNext=(JMPCButtonSimple)JMPCButtonSimple.create("Next","img/buttons/db/next.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnPrev=(JMPCButtonSimple)JMPCButtonSimple.create("Prev","img/buttons/db/prev.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnFirst=(JMPCButtonSimple)JMPCButtonSimple.create("First","img/buttons/db/first.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnLast=(JMPCButtonSimple)JMPCButtonSimple.create("Last","img/buttons/db/last.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnView=(JMPCButtonSimple)JMPCButtonSimple.create("View","img/buttons/db/view.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnRefresh=(JMPCButtonSimple)JMPCButtonSimple.create("Refresh","img/buttons/db/refresh.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
+        this.btnCancel=(JMPCButtonSimple)JMPCButtonSimple.create("Cancel","img/buttons/db/cancel.png", JMVec2.create(this.defWidth, this.defHeight)).setFontColor(JMColor.decode("#234e79")).increaseFontSize(2);
         this.view(editing,adding);
     }
     private void display(boolean editing,boolean adding){
@@ -206,7 +207,7 @@ public class JMPCDBButtonGroup implements JMFormInterface{
     }
     public void btnAddClick(){
         //List<String> fieldNames=this.table.getStyle().getFieldNames();
-        //List<JMInputInterface> objs=new ArrayList();
+        //List<JMFieldInterface> objs=new ArrayList();
         //for(String fieldName:fieldNames)objs.add(JMPCCellObject.create());
         
         this.table.addNewRow();

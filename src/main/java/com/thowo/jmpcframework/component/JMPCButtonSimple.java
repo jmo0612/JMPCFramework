@@ -5,6 +5,8 @@
  */
 package com.thowo.jmpcframework.component;
 
+import com.thowo.jmjavaframework.JMButtonInterface;
+import com.thowo.jmjavaframework.JMColor;
 import com.thowo.jmjavaframework.JMFunctions;
 import com.thowo.jmjavaframework.JMVec2;
 import com.thowo.jmpcframework.JMPCFunctions;
@@ -30,7 +32,7 @@ import javax.swing.SwingConstants;
  *
  * @author jimi
  */
-public class JMPCButtonSimple extends JPanel {
+public class JMPCButtonSimple extends JPanel implements  JMButtonInterface{
     private JPanel content=new JPanel();
     private JLabel text=new JLabel();
     private JPanel normal;
@@ -51,31 +53,6 @@ public class JMPCButtonSimple extends JPanel {
     }
     public static JMPCButtonSimple create(String text, String resId, JMVec2 size){
         return new JMPCButtonSimple(text,resId,size);
-    }
-    
-    public JMPCButtonSimple setFontColor(Color color){
-        this.fontColor=color;
-        this.refreshContent();
-        return this;
-    }
-    public JMPCButtonSimple increaseFontSize(int inc){
-        this.fontSize+=inc;
-        this.refreshContent();
-        return this;
-    }
-    public JMPCButtonSimple decreaseFontSize(int dec){
-        this.fontSize-=dec;
-        this.refreshContent();
-        return this;
-    }
-    public JMPCButtonSimple setFont(String font){
-        this.fontFamily=font;
-        this.refreshContent();
-        return this;
-    }
-    public JMPCButtonSimple setText(String text){
-        this.text.setText(text);
-        return this;
     }
     
     public JMPCButtonSimple(String text, String resId){
@@ -168,106 +145,6 @@ public class JMPCButtonSimple extends JPanel {
         this.refreshContent();
     }
     
-    public void setLocked(boolean locked){
-        //if(this.locked!=locked){
-            this.locked=locked;
-            this.removeMouseListener(this.uiListener);
-            for(MouseListener l:this.listeners)this.removeMouseListener(l);
-            
-            if(!locked){
-                this.addMouseListener(this.uiListener);
-                for(MouseListener l:this.listeners)this.addMouseListener(l);
-            }
-            this.normal.setVisible(true);
-            this.hover.setVisible(!locked);
-            this.clicked.setVisible(!locked);
-            this.disabled.setVisible(locked);
-
-            this.setEnabled(!locked);
-            //this.refreshContent();
-        //}
-    }
-    public boolean isLocked(){
-        return this.locked;
-    }
-    
-    public void setAction(Runnable action){
-        if(action==null)return;
-        if(this.listeners!=null){
-            for(MouseListener l:this.listeners){
-                this.removeMouseListener(l);
-            }
-        }else this.listeners=new ArrayList();
-        
-        MouseListener newL=new MouseListener(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                action.run();
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        };
-        this.listeners.clear();
-        this.listeners.add(newL);
-        if(!this.locked)this.addMouseListener(this.listeners.get(0));
-    }
-    
-    public void addAction(Runnable action){
-        if(action==null)return;
-        if(this.listeners==null){
-            this.listeners=new ArrayList();
-        }
-        
-        MouseListener newL=new MouseListener(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                action.run();
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        };
-        this.listeners.add(newL);
-        if(!this.locked)this.addMouseListener(newL);
-    }
-    
     private void addListener(){
         this.uiListener=new MouseListener() {
             @Override
@@ -308,6 +185,145 @@ public class JMPCButtonSimple extends JPanel {
             }
         };
         this.addMouseListener(this.uiListener);
+    }
+
+    @Override
+    public JMButtonInterface setFontColor(JMColor color) {
+        this.fontColor=JMPCColor.get(color);
+        this.refreshContent();
+        return this;
+    }
+
+    @Override
+    public JMButtonInterface increaseFontSize(int inc) {
+        this.fontSize+=inc;
+        this.refreshContent();
+        return this;
+    }
+
+    @Override
+    public JMButtonInterface decreaseFontSize(int dec) {
+        this.fontSize-=dec;
+        this.refreshContent();
+        return this;
+    }
+
+    @Override
+    public JMButtonInterface setFont(String font) {
+        this.fontFamily=font;
+        this.refreshContent();
+        return this;
+    }
+
+    @Override
+    public JMButtonInterface setText(String text) {
+        this.text.setText(text);
+        return this;
+    }
+
+    @Override
+    public void setLocked(boolean locked) {
+        //if(this.locked!=locked){
+            this.locked=locked;
+            this.removeMouseListener(this.uiListener);
+            for(MouseListener l:this.listeners)this.removeMouseListener(l);
+            
+            if(!locked){
+                this.addMouseListener(this.uiListener);
+                for(MouseListener l:this.listeners)this.addMouseListener(l);
+            }
+            this.normal.setVisible(true);
+            this.hover.setVisible(!locked);
+            this.clicked.setVisible(!locked);
+            this.disabled.setVisible(locked);
+
+            this.setEnabled(!locked);
+            //this.refreshContent();
+        //}
+    }
+
+    @Override
+    public boolean isLocked() {
+        return this.locked;
+    }
+
+    @Override
+    public void setAction(Runnable action) {
+        if(action==null)return;
+        if(this.listeners!=null){
+            for(MouseListener l:this.listeners){
+                this.removeMouseListener(l);
+            }
+        }else this.listeners=new ArrayList();
+        
+        MouseListener newL=new MouseListener(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                action.run();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        };
+        this.listeners.clear();
+        this.listeners.add(newL);
+        if(!this.locked)this.addMouseListener(this.listeners.get(0));
+    }
+
+    @Override
+    public void addAction(Runnable action) {
+        if(action==null)return;
+        if(this.listeners==null){
+            this.listeners=new ArrayList();
+        }
+        
+        MouseListener newL=new MouseListener(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                action.run();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        };
+        this.listeners.add(newL);
+        if(!this.locked)this.addMouseListener(newL);
     }
     
     

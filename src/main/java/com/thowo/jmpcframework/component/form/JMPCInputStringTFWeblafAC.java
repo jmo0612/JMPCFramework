@@ -8,7 +8,7 @@ package com.thowo.jmpcframework.component.form;
 import com.alee.laf.text.WebTextField;
 import com.thowo.jmjavaframework.JMDataContainer;
 import com.thowo.jmjavaframework.JMFunctions;
-import com.thowo.jmjavaframework.JMInputInterface;
+import com.thowo.jmjavaframework.JMFieldInterface;
 import com.thowo.jmjavaframework.table.JMRow;
 import com.thowo.jmpcframework.others.JMPCAutoComplete;
 import com.thowo.jmpcframework.others.JMPCAutoComplete.CommitAction;
@@ -34,7 +34,7 @@ import javax.swing.event.DocumentListener;
  *
  * @author jimi
  */
-public class JMPCInputStringTFWeblafAC extends JPanel implements JMInputInterface{
+public class JMPCInputStringTFWeblafAC extends JPanel implements JMFieldInterface{
     private JLabel label;
     private JLabel error;
     private JPanel errPanel;
@@ -186,19 +186,7 @@ public class JMPCInputStringTFWeblafAC extends JPanel implements JMInputInterfac
     public boolean onEditMode(){
         return this.editMode;
     }
-    public void setEditMode(boolean editMode, JMRow currentRow, int column){
-        if(currentRow!=null){
-            int col=column;
-            //this.dc=currentRow.getDataContainers().get(col);
-            this.dc=currentRow.getCells().get(col).getDataContainer();
-            if(!this.dc.isInterfaceRegistered(this))this.dc.addInterface(this, true);
-        }else{
-            this.text.setText("");
-        }
-        this.editMode=editMode;
-        this.text.setEditable(this.editable && editMode);
-        
-    }
+    
     public boolean editable(){
         return this.editable;
     }
@@ -377,5 +365,29 @@ public class JMPCInputStringTFWeblafAC extends JPanel implements JMInputInterfac
     @Override
     public void setValueObject(Object value) {
         //this.valueObject=value;
+    }
+
+    @Override
+    public void setEditMode(boolean editMode, JMRow currentRow, int column) {
+        if(currentRow!=null){
+            int col=column;
+            //this.dc=currentRow.getDataContainers().get(col);
+            this.dc=currentRow.getCells().get(col).getDataContainer();
+            if(!this.dc.isInterfaceRegistered(this))this.dc.addInterface(this, true);
+        }else{
+            this.text.setText("");
+        }
+        this.editMode=editMode;
+        this.text.setEditable(this.editable && editMode);
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.setEditable(!disabled);
+    }
+
+    @Override
+    public void setLookUpAction(Runnable action) {
+        
     }
 }

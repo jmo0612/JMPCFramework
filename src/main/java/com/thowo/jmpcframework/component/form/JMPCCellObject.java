@@ -7,8 +7,9 @@ package com.thowo.jmpcframework.component.form;
 
 import com.thowo.jmjavaframework.JMDataContainer;
 import com.thowo.jmjavaframework.JMFunctions;
-import com.thowo.jmjavaframework.JMInputInterface;
+import com.thowo.jmjavaframework.JMFieldInterface;
 import com.thowo.jmjavaframework.JMVec2;
+import com.thowo.jmjavaframework.table.JMRow;
 import com.thowo.jmpcframework.JMPCFunctions;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -17,7 +18,7 @@ import javax.swing.SwingConstants;
  *
  * @author jimi
  */
-public class JMPCCellObject extends JLabel implements JMInputInterface{
+public class JMPCCellObject extends JLabel implements JMFieldInterface{
     private Object value;
     private String valueString;
     private String text;
@@ -105,5 +106,20 @@ public class JMPCCellObject extends JLabel implements JMInputInterface{
     @Override
     public void setValueObject(Object value) {
         this.value=value;
+    }
+
+    @Override
+    public void setEditMode(boolean editMode, JMRow currentRow, int column) {
+        
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        
+    }
+
+    @Override
+    public void setLookUpAction(Runnable action) {
+        
     }
 }
