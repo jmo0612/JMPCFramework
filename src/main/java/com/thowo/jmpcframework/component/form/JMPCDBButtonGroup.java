@@ -214,7 +214,7 @@ public class JMPCDBButtonGroup implements JMTableInterface{
         
     }
     public void btnRefreshClick(){
-        JMPCDBButtonGroup.this.table.refresh();
+        JMPCDBButtonGroup.this.table.refresh(true);
     }
     public void btnViewClick(){
         JMPCDBButtonGroup.this.table.viewRow();
