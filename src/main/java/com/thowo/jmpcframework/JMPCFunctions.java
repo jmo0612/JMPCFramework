@@ -181,7 +181,7 @@ public class JMPCFunctions{
     
     private static void resizeImage(URL tmp, JPanel panel){
         JLabel ret=new JLabel("NULL");
-        Image img=new ImageIcon(tmp.getPath()).getImage();
+        Image img=new ImageIcon(tmp).getImage();
         JMVec2 imgSize=new JMVec2(img.getWidth(null),img.getHeight(null));
         JMVec2 size=JMVec2.create(panel.getWidth(), panel.getHeight());
         List<JMVec2> scaled=JMFunctions.scaledSize(imgSize, size, JMFunctions.SCALE_FIT);
